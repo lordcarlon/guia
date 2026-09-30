@@ -302,7 +302,7 @@ const norm=s=>s.replace(/^[^\p{L}\p{N}]+/u,'').split(':')[0].trim().toLowerCase(
 /* ========== 2. ESTADO ========== */
 const savedV2=JSON.parse(localStorage.getItem('guia_estudo_v2')||'null');
 const state=Object.assign({area:'redes',all:false,xp:0,done:{redes:[],gestao:[]},answers:{},started:Date.now()},savedV2||{});
-state.done=state.done||{redes:[],gestao:[]};state.answers=state.answers||{};state.xp=state.xp||0;
+state.done=state.done||{redes:[],gestao:[]};state.answers=state.answers||{};state.xp=state.xp||0;state.ok=state.ok||[];state.wrong=state.wrong||[];state.nAns=state.nAns||0;state.round=state.round||0;state.revTry={};
 const persist=()=>localStorage.setItem('guia_estudo_v2',JSON.stringify(state));
 const lessonCount=()=>studyData[state.area].lessons.length;
 const totalLessons=()=>studyData.redes.lessons.length+studyData.gestao.lessons.length;
@@ -345,6 +345,7 @@ function renderLessons(d){
     <div class="studyactions">
       <button id="all">Mostrar todas as explicações</button>
       <button class="jump" data-jump="v2-exercises">📝 Exercícios</button>
+      <button class="jump" data-jump="v2-review">🔁 Erros</button>
       <button class="jump" data-jump="v2-progress">🎯 Progresso</button>
     </div>
   </div>`;
@@ -361,36 +362,92 @@ function renderLessons(d){
 }
 
 
-const V2Q=[
- ['Qual é a função principal de um router?',['Editar documentos','Encaminhar tráfego entre redes','Criar palavras-passe','Substituir switches'],1],
- ['A Web é:',['A infraestrutura física da Internet','Um dos serviços que funciona sobre a Internet','Um tipo de cabo','Uma rede LAN'],1],
- ['CRM significa:',['Customer Revenue Model','Customer Relationship Management','Computer Routing Method','Client Router Management'],1],
- ['QBR serve para:',['Configurar Wi-Fi','Rever resultados, objetivos, riscos e próximos passos','Criar IPs','Apagar oportunidades'],1],
- ['Cross-sell é:',['Adicionar uma oferta complementar','Sempre trocar por uma oferta mais cara','Cancelar um contrato','Reduzir clientes'],0],
- ['SLA define:',['Níveis de serviço acordados','Cores do CRM','Endereço IP','Nome do cliente'],0],
- ['Churn representa:',['Aquisição','Perda de clientes ou receita, conforme a métrica','Uma topologia','Um protocolo'],1],
- ['No TCP/IP, transporte é:',['Aplicação','Transporte','Internet','Acesso à rede'],1]
+const BANK=[
+['r','Qual é a função principal de um router?',['Editar documentos','Encaminhar tráfego entre redes','Criar palavras-passe','Substituir switches'],1],
+['r','A Web é:',['A infraestrutura física da Internet','Um dos serviços que funciona sobre a Internet','Um tipo de cabo','Uma rede LAN'],1],
+['r','Que camada do TCP/IP usa TCP ou UDP?',['Aplicação','Transporte','Internet','Acesso à rede'],1],
+['r','O que faz um switch?',['Liga dispositivos por cabo na mesma LAN','Traduz nomes em IPs','Cifra o Wi-Fi','Cria endereços públicos'],0],
+['r','Que rede cobre uma casa ou um escritório?',['WAN','MAN','LAN','PAN'],2],
+['r','O que faz o DNS?',['Traduz nomes em endereços IP','Liga cabos','Remove vírus','Cria o Wi-Fi'],0],
+['r','O HTTPS difere do HTTP por:',['Ser mais lento','Cifrar os dados','Usar cabos','Não usar IP'],1],
+['r','Uma rede PAN é:',['Rede de uma cidade','Rede pessoal de poucos metros','Rede mundial','Rede de servidores'],1],
+['r','Que protocolo atribui IPs automaticamente?',['DNS','FTP','DHCP','HTTP'],2],
+['r','Na topologia em estrela:',['Todos partilham um cabo','Tudo liga a um ponto central','Formam um círculo','Não há ligações'],1],
+['r','Porque existe o IPv6?',['O IPv4 é mais seguro','Há poucos endereços IPv4','É mais barato','Usa cabos'],1],
+['r','Numa rede, o cliente:',['Oferece serviços','Faz pedidos ao servidor','Só guarda dados','É sempre um router'],1],
+['r','O modem serve para:',['Converter o sinal do operador','Criar aplicações','Guardar ficheiros','Aumentar a bateria'],0],
+['r','Qual destes é um risco das redes?',['Malware','Escalabilidade','Produtividade','Partilha'],0],
+['r','Qual é uma vantagem das redes?',['Partilha de recursos','Mais vírus','Menos comunicação','Dependência total'],0],
+['r','O TCP garante:',['Entrega completa e ordenada','Nomes de sites','Wi-Fi mais rápido','O endereço da casa'],0],
+['r','Qual é normalmente mais estável?',['Wi-Fi','Cabo Ethernet','Bluetooth','Nenhuma'],1],
+['r','Um IP privado é usado:',['Em toda a Internet','Dentro da rede local','Só em servidores','Só em telemóveis'],1],
+['r','A Internet é uma:',['LAN','WAN','PAN','Topologia'],1],
+['r','O FTP serve para:',['Transferir ficheiros','Traduzir nomes','Atribuir IPs','Cifrar mensagens'],0],
+['g','CRM significa:',['Customer Revenue Model','Customer Relationship Management','Computer Routing Method','Client Router Management'],1],
+['g','O QBR serve para:',['Configurar Wi-Fi','Rever resultados, objetivos, riscos e próximos passos','Criar IPs','Apagar oportunidades'],1],
+['g','Cross-sell é:',['Adicionar uma oferta complementar','Trocar sempre por uma oferta mais cara','Cancelar um contrato','Reduzir clientes'],0],
+['g','O SLA define:',['Níveis de serviço acordados','Cores do CRM','Endereço IP','Nome do cliente'],0],
+['g','Churn representa:',['Aquisição','Perda de clientes ou de receita','Uma topologia','Um protocolo'],1],
+['g','Upsell é:',['Vender uma versão superior','Vender algo sem relação','Cancelar um plano','Baixar o preço'],0],
+['g','O gestor de contas foca-se em:',['Só prospeção','Retenção e expansão','Só faturação','Só suporte técnico'],1],
+['g','O NPS mede:',['Tempo de resposta','Probabilidade de recomendar','Receita anual','Cancelamentos'],1],
+['g','ARR é:',['Receita recorrente anual','Custo de aquisição','Taxa de satisfação','Tempo de resolução'],0],
+['g','Com um cliente insatisfeito, o primeiro passo é:',['Defender-se','Ouvir e entender','Prometer tudo','Ignorar'],1],
+['g','No plano 30-60-90, os primeiros 30 dias servem para:',['Fechar contratos','Aprender e observar','Renovar contratos','Cancelar contas'],1],
+['g','Um quick win é:',['Um resultado pequeno e rápido','Um contrato grande','Um erro','Uma sigla de CRM'],0],
+['g','Onboarding é:',['A integração inicial do cliente','Um cancelamento','Uma renovação','Uma cobrança'],0],
+['g','Gerir expectativas é:',['Prometer o máximo','Ser honesto sobre o que e quando','Evitar contacto','Esconder problemas'],1],
+['g','O CSAT mede:',['A satisfação do cliente','A receita','O churn','O IP'],0],
+['g','Na segmentação ABC, a classe A é:',['De menor impacto','De maior importância estratégica','Sem valor','Só de clientes novos'],1],
+['g','O pipeline é:',['Oportunidades em andamento','Uma lista de tickets','Um cabo','Um contrato'],0],
+['g','Um NRR acima de 100% significa que:',['A receita dos clientes existentes cresceu','Perdeste clientes','Só subiste preços','Nada de especial'],0],
+['g','Um ticket é:',['Um pedido ou problema registado','Um cliente novo','Uma reunião QBR','Um plano de vendas'],0],
+['g','A carteira de clientes é:',['Os clientes sob responsabilidade do gestor','Uma lista de IPs','Um tipo de contrato','Um KPI'],0]
 ];
+const weekKey=()=>{const d=new Date(),t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));t.setUTCDate(t.getUTCDate()+4-(t.getUTCDay()||7));const y=t.getUTCFullYear();return y+'-S'+Math.ceil(((t-Date.UTC(y,0,1))/864e5+1)/7)};
+function rng(seed){let h=1779033703^seed.length;for(let i=0;i<seed.length;i++){h=Math.imul(h^seed.charCodeAt(i),3432918353);h=h<<13|h>>>19}return()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return((h^=h>>>16)>>>0)/4294967296}}
+function pickSet(seed){const r=rng(seed),sh=a=>a.map(x=>[r(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]),ids=BANK.map((_,i)=>i);
+ return [...sh(ids.filter(i=>BANK[i][0]==='r')).slice(0,4),...sh(ids.filter(i=>BANK[i][0]==='g')).slice(0,4)]}
+function ensureSet(force){
+ const w=weekKey();
+ if(force||!state.set||state.week!==w){state.round=force?state.round+1:0;state.week=w;state.set=pickSet(w+':'+state.round);state.answers={};persist()}
+}
+function keepScroll(fn){
+ const y=window.scrollY,abertos=[...document.querySelectorAll('.card.open')].map(c=>c.id);
+ fn();
+ abertos.forEach(id=>{const c=document.getElementById(id);if(c)setOpen(c,true)});
+ window.scrollTo({top:y,behavior:'instant'});
+}
+function qHTML(id,n,a,rev){
+ const q=BANK[id],tries=rev?(state.revTry[id]||[]):[];
+ return `<div class="exq"><b>${n}. ${q[1]}</b>${q[2].map((o,j)=>{
+  let c='',d='';
+  if(!rev&&a!==undefined){c=j===q[3]?'ok':a===j?'no':'';d='disabled'}
+  if(rev&&tries.includes(j)){c='no';d='disabled'}
+  return `<button class="opt ${c}" data-${rev?'rev':'answer'}="${id}:${j}" ${d}>${String.fromCharCode(65+j)}) ${o}</button>`}).join('')}${!rev&&a!==undefined?`<p class="msg">${a===q[3]?'✓ Correto.':'✕ Incorreto. Resposta: '+q[2][q[3]]}</p>`:''}${rev&&tries.length?'<p class="msg">✕ Ainda não. Tenta outra vez.</p>':''}</div>`;
+}
 function v2Extras(){
  return `<div class="v2section" id="v2-exercises"><div class="v2title">📝 EXERCÍCIOS</div><div id="exercisePanel" class="v2panel"></div></div>
  <div class="v2section" id="v2-progress"><div class="v2title">🎯 MEU PROGRESSO</div><div id="progressPanel" class="v2panel"></div></div>
+ <div class="v2section" id="v2-review"><div class="v2title">🔁 REVER ERROS</div><div id="reviewPanel" class="v2panel"></div></div>
  <div class="v2section"><div class="v2title">🏆 CONQUISTAS</div><div id="achPanel" class="v2panel"></div></div>
  <div class="v2section"><div class="v2title">🎓 CERTIFICADO</div><div id="certPanel" class="v2panel"></div></div>
  <div class="v2section"><div class="v2title">⚙️ CONFIGURAÇÕES</div><div class="v2panel"><button class="complete danger" id="resetV2">↻ Reiniciar todo o progresso</button></div></div>`;
 }
 function renderV2Extras(){
- const ep=$('#exercisePanel'); if(ep){
-   ep.innerHTML=V2Q.map((q,i)=>{
-    const a=state.answers[i]; return `<div class="exq"><b>${i+1}. ${q[0]}</b>${q[1].map((o,j)=>`<button class="opt ${a!==undefined?(j===q[2]?'ok':a===j?'no':''):''}" data-answer="${i}:${j}" ${a!==undefined?'disabled':''}>${String.fromCharCode(65+j)}) ${o}</button>`).join('')}${a!==undefined?`<p class="msg">${a===q[2]?'✓ Correto. +25 XP':'✕ Incorreto. Resposta: '+q[1][q[2]]}</p>`:''}</div>`;
-   }).join('');
+ ensureSet();
+ const ep=$('#exercisePanel');if(ep){
+   const feitas=state.set.filter(id=>state.answers[id]!==undefined).length;
+   ep.innerHTML=`<p class="msg" style="margin:0 0 10px">Desafio ${state.week} · ${feitas}/${state.set.length} respondidas</p>`+state.set.map((id,k)=>qHTML(id,k+1,state.answers[id],false)).join('')+`<button class="complete" data-newset="1">🔄 Novo desafio</button>`;
  }
+ const rp=$('#reviewPanel');if(rp)rp.innerHTML=state.wrong.length?`<p class="msg" style="margin:0 0 10px">${state.wrong.length} pergunta(s) para rever</p>`+state.wrong.map((id,k)=>qHTML(id,k+1,undefined,true)).join(''):'<p class="msg">Sem erros para rever. 👏</p>';
  const pp=$('#progressPanel');if(pp)pp.innerHTML=`<div class="v2grid">
    <div class="v2stat"><small>🌐 Redes</small><b>${state.done.redes.length}/15</b></div>
    <div class="v2stat"><small>💼 Gestão</small><b>${state.done.gestao.length}/18</b></div>
    <div class="v2stat"><small>⚡ XP</small><b>${state.xp}</b></div>
    <div class="v2stat"><small>🏅 Nível</small><b>${level()}</b></div>
  </div><p class="msg">${completedTotal()} de ${totalLessons()} aulas concluídas · ${percent()}%</p>`;
- const n=completedTotal(), qn=Object.keys(state.answers).length;
+ const n=completedTotal(), qn=state.nAns;
  const ach=[['🌱','Primeiro passo','1 aula',n>=1],['📚','Estudante','5 aulas',n>=5],['⚡','Constante','10 aulas',n>=10],['🌐','Mestre das Redes','15 Redes',state.done.redes.length>=15],['💼','Gestor Júnior','18 Gestão',state.done.gestao.length>=18],['📝','Praticante','8 exercícios',qn>=8],['💎','1000 XP','1000 XP',state.xp>=1000],['🏆','Curso completo','33 aulas',n>=33]];
  const ap=$('#achPanel');if(ap)ap.innerHTML=`<div class="achgrid">${ach.map(x=>`<div class="ach ${x[3]?'on':''}"><i>${x[0]}</i><b>${x[1]}</b><small>${x[2]}</small></div>`).join('')}</div>`;
  const cp=$('#certPanel');if(cp)cp.innerHTML=n>=33?`<div class="certbox"><div class="kick">CERTIFICADO DE CONCLUSÃO</div><h3>GUIA DE ESTUDO</h3><p>Fundamentos de Redes + Gestor de Contas Júnior</p><p class="msg">${new Date().toLocaleDateString('pt-PT')}</p><button class="complete" data-print>🖨️ Imprimir / Guardar</button></div>`:`<div class="certbox"><h3>Certificado bloqueado</h3><p class="msg">Conclui as 33 aulas para desbloquear.</p><b>${n}/33</b></div>`;
@@ -403,16 +460,27 @@ function completeLesson(n){
  abertos.forEach(id=>{const c=document.getElementById(id);if(c)setOpen(c,true)});
  window.scrollTo({top:y,behavior:'instant'});
 }
-function answerV2(i,j){
- if(state.answers[i]!==undefined)return;
- state.answers[i]=j;if(j===V2Q[i][2])state.xp+=25;
- persist();renderApp();
- setTimeout(()=>document.getElementById('v2-exercises')?.scrollIntoView({behavior:'smooth',block:'start'}),50);
+function answerV2(id,j){
+ if(state.answers[id]!==undefined)return;
+ keepScroll(()=>{
+  state.answers[id]=j;state.nAns++;
+  if(j===BANK[id][3]){if(!state.ok.includes(id)){state.ok.push(id);state.xp+=25}state.wrong=state.wrong.filter(x=>x!==id)}
+  else if(!state.wrong.includes(id))state.wrong.push(id);
+  persist();renderApp();
+ });
 }
+function answerRev(id,j){
+ keepScroll(()=>{
+  if(j===BANK[id][3]){state.wrong=state.wrong.filter(x=>x!==id);delete state.revTry[id]}
+  else(state.revTry[id]=state.revTry[id]||[]).push(j);
+  persist();renderApp();
+ });
+}
+function newSet(){keepScroll(()=>{ensureSet(true);renderApp()})}
 function resetV2(){
  if(confirm('Apagar todo o progresso, XP e respostas?')){
   localStorage.removeItem('guia_estudo_v2');
-  state.area='redes';state.all=false;state.xp=0;state.done={redes:[],gestao:[]};state.answers={};
+  state.area='redes';state.all=false;state.xp=0;state.done={redes:[],gestao:[]};state.answers={};state.ok=[];state.wrong=[];state.nAns=0;state.set=null;state.week=null;state.round=0;state.revTry={};
   renderApp();
  }
 }
@@ -504,6 +572,8 @@ tabs.addEventListener('click',e=>{const p=e.target.closest('.pill');p&&scrollToL
 app.addEventListener('click',e=>{
   const c=e.target.closest('[data-complete]');if(c)return completeLesson(Number(c.dataset.complete));
   const a=e.target.closest('[data-answer]');if(a){const [i,j]=a.dataset.answer.split(':').map(Number);return answerV2(i,j)}
+  const rv=e.target.closest('[data-rev]');if(rv){const [i,j]=rv.dataset.rev.split(':').map(Number);return answerRev(i,j)}
+  if(e.target.closest('[data-newset]'))return newSet();
   const j=e.target.closest('[data-jump]');if(j){document.getElementById(j.dataset.jump)?.scrollIntoView({behavior:'smooth',block:'start'});return}
   if(e.target.id==='resetV2'){resetV2();return}
   if(e.target.closest('[data-print]')){window.print();return}
