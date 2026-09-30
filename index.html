@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Guia de Estudo</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#07090f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Guia">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#07090f;--s:#0f141d;--s2:#151b27;--t:#e6ebf2;--m:#8c97aa;--b:#1f2837;--a:#00d9ff;--rgb:0,217,255;--r:#ef4444;--g:#10b981}
+body[data-theme=gold]{--bg:#0b0905;--s:#14100a;--s2:#1b160d;--t:#f1e8d0;--m:#948764;--b:#2b2211;--a:#d4af37;--rgb:212,175,55}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--t);font-family:"Space Grotesk",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);transition:background .4s}
+.mono,.kick,.num,.pill,button{font-family:"Space Mono",ui-monospace,monospace}
+header{max-width:860px;margin:0 auto;padding:26px 16px 14px;text-align:center}
+.kick{color:var(--a);font-size:.72rem;letter-spacing:2px}
+h1{font-size:clamp(1.2rem,6vw,1.9rem);margin:6px 0;letter-spacing:.5px}
+.sub{color:var(--m);font-size:.85rem;margin-bottom:16px}
+.seg{display:flex;padding:4px;gap:4px;background:var(--s);border:1px solid var(--b);border-radius:14px;max-width:420px;margin:0 auto}
+.seg button{flex:1;padding:11px 8px;border:0;border-radius:10px;background:none;color:var(--m);font-size:.74rem;cursor:pointer;transition:.25s}
+.seg button[aria-pressed=true]{background:rgba(var(--rgb),.14);color:var(--a);box-shadow:inset 0 0 0 1px rgba(var(--rgb),.5)}
+.top{position:sticky;top:env(safe-area-inset-top);z-index:20;background:rgba(7,9,15,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--b)}
+body[data-theme=gold] .top{background:rgba(11,9,5,.92)}
+#tabs{display:flex;gap:8px;padding:10px 16px;overflow-x:auto;scrollbar-width:none;max-width:860px;margin:0 auto}
+#tabs::-webkit-scrollbar{display:none}
+.pill{flex:none;white-space:nowrap;padding:8px 13px;border-radius:999px;border:1px solid var(--b);background:var(--s);color:var(--m);font-size:.72rem;cursor:pointer;transition:.2s}
+.pill.on{border-color:var(--a);color:var(--a);background:rgba(var(--rgb),.12)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+main{max-width:860px;margin:0 auto;padding:12px 16px 60px}
+.tools{display:flex;justify-content:flex-end;margin-bottom:12px}
+.tools button{padding:9px 14px;border-radius:10px;border:1px solid var(--b);background:var(--s);color:var(--a);font-size:.72rem;cursor:pointer}
+.card{background:var(--s);border:1px solid var(--b);border-top:2px solid var(--a);border-radius:16px;padding:18px 14px;margin-bottom:18px;scroll-margin-top:var(--bar,120px);box-shadow:0 8px 24px rgba(0,0,0,.35);animation:in .5s ease both}
+@keyframes in{from{opacity:0;transform:translateY(14px)}}
+.ch{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+.num{flex:none;font-size:.68rem;color:var(--a);background:rgba(var(--rgb),.1);border:1px solid rgba(var(--rgb),.3);border-radius:8px;padding:3px 9px;margin-top:2px}
+h2{font-size:1rem;line-height:1.4}
+.dg{background:var(--s2);border:1px solid var(--b);border-radius:12px;padding:14px 10px}
+.gr{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:10px}
+.bx{padding:12px 10px;border-radius:12px;border:1px solid rgba(var(--rgb),.28);background:rgba(var(--rgb),.05);text-align:center;font-size:.76rem;color:var(--m);transition:.2s}
+.bx:hover{border-color:var(--a);transform:translateY(-2px)}
+.bx i{display:block;font-style:normal;font-size:1.5rem;margin-bottom:3px}
+.bx b{display:block;color:var(--a);font-size:.82rem;margin-bottom:3px;overflow-wrap:anywhere}
+.fl{display:flex;flex-direction:column;align-items:center;gap:2px}
+.st{width:100%;max-width:340px;padding:10px 14px;border-radius:10px;border:1px solid rgba(var(--rgb),.35);background:rgba(var(--rgb),.07);text-align:center;font:.76rem "Space Mono",monospace;color:var(--t)}
+.ar{color:var(--a);font-size:1rem;line-height:1}
+.ex{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:14px;padding:12px 14px;min-height:44px;border-radius:10px;border:1px solid rgba(var(--rgb),.4);background:rgba(var(--rgb),.07);color:var(--a);font-size:.75rem;cursor:pointer}
+.ex span{transition:transform .25s}
+.ex[aria-expanded=true] span{transform:rotate(180deg)}
+.nt .xp{transition:none!important}
+.xp{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease}
+.xp.open{grid-template-rows:1fr}
+.xp>div{overflow:hidden}
+.xp p{margin-top:12px;padding:14px;border-left:3px solid var(--a);background:rgba(var(--rgb),.05);border-radius:0 10px 10px 0;font-size:.88rem;color:#c3ccdb;line-height:1.7}
+.sec{font:.72rem "Space Mono",monospace;color:var(--a);letter-spacing:2px;margin:26px 0 12px}
+.tbl{overflow-x:auto;border-radius:10px}
+table{width:100%;border-collapse:collapse;min-width:340px;font-size:.78rem}
+th{padding:9px;text-align:left;background:rgba(var(--rgb),.1);color:var(--a);font-family:"Space Mono",monospace;font-size:.7rem}
+td{padding:9px;border-top:1px solid var(--b);color:var(--m)}
+td:first-child{color:var(--a);font-weight:700;white-space:nowrap}
+td:nth-child(2){color:var(--t)}
+#q{width:100%;padding:12px;margin-bottom:12px;border-radius:10px;border:1px solid var(--b);background:var(--s2);color:var(--t);font-size:.9rem}
+.msg{margin-top:14px;text-align:center;color:var(--m);font-size:.85rem}
+.bx[data-t],.st[data-t]{cursor:pointer}
+.bx.sel,.st.sel{border-color:var(--a);background:rgba(var(--rgb),.2);box-shadow:0 0 0 2px rgba(var(--rgb),.45)}
+.bx:focus-visible,.st:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+.tp{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease}
+.tp.open{grid-template-rows:1fr}
+.tp>div{overflow:hidden}
+.tpi{margin-top:10px;padding:12px 14px;border:1px solid rgba(var(--rgb),.4);border-radius:10px;background:rgba(var(--rgb),.06)}
+.tpi b{display:block;color:var(--a);font:.72rem "Space Mono",monospace;letter-spacing:1px;margin-bottom:6px;overflow-wrap:anywhere}
+.tpi p{font-size:.85rem;color:#c3ccdb;line-height:1.6}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body data-theme="cyan">
+<header>
+  <div class="kick">// GUIA DE ESTUDO</div>
+  <h1 id="h-title"></h1>
+  <p class="sub" id="h-sub"></p>
+  <div class="seg" role="group" aria-label="Área de estudo">
+    <button data-k="redes" aria-pressed="true">🌐 Redes</button>
+    <button data-k="gestao" aria-pressed="false">💼 Gestão de Contas</button>
+  </div>
+</header>
+<div class="top"><nav id="tabs" aria-label="Temas"></nav></div>
+<main id="app"></main>
+
+<script>
+/* ========== 1. DADOS ========== */
+const F=(...s)=>`<div class="fl">${s.map(x=>`<div class="st">${x}</div>`).join('<div class="ar">↓</div>')}</div>`;
+const C=(...s)=>`<div class="gr">${s.map(([i,t,d])=>`<div class="bx"><i>${i}</i><b>${t}</b><span>${d||''}</span></div>`).join('')}</div>`;
+const L=(tab,title,diagram,exp)=>({tab,title,diagram,exp});
+
+const studyData={
+redes:{theme:'cyan',kicker:'REDES',title:'FUNDAMENTOS DE REDES',subtitle:'15 conceitos essenciais, do básico ao TCP/IP',
+summary:[F('Dispositivo','Conexão','Rede','Protocolos','Comunicação'),'Redes são dispositivos ligados por regras comuns. Revê os protocolos e as camadas: são a base de tudo.'],
+lessons:[
+L('Definição','O que são redes?',F('💻 DISPOSITIVO','🌐 REDE','🖥️ DISPOSITIVO'),'Uma rede é um conjunto de dispositivos ligados que trocam dados e partilham recursos, como internet, ficheiros e impressoras. Ex: telemóvel, PC e router lá de casa.'),
+L('Objetivo','Objetivo das redes',C(['💬','Comunicação'],['📁','Partilha'],['🔑','Acesso a recursos'],['🗄️','Centralização'],['🔗','Conectividade']),'Ligar dispositivos e pessoas para comunicar, partilhar recursos, aceder a serviços e centralizar dados e gestão.'),
+L('Vantagens','Vantagens das redes',C(['💬','Comunicação','Email, chat, vídeo'],['🖨️','Partilha','Menos equipamento'],['⚡','Produtividade','Trabalho colaborativo'],['🛠️','Gestão','Controlo central'],['📈','Escalabilidade','Fácil de crescer']),'Uma rede reduz custos, acelera a troca de informação e permite crescer sem refazer tudo.'),
+L('Riscos','Riscos das redes',C(['🎯','Ataques'],['🦠','Malware'],['🕵️','Roubo de dados'],['🚫','Acesso não autorizado'],['⚠️','Falhas'],['⏸️','Indisponibilidade']),'Quanto mais ligada, mais exposta. É preciso segurança (palavras-passe, atualizações, firewall) e planos para falhas.'),
+L('LAN/MAN/WAN','LAN, MAN e WAN',C(['🏠','LAN','Casa ou escritório. Ex: Wi-Fi de casa'],['🏙️','MAN','Cidade. Ex: rede de um município'],['🌍','WAN','Países. Ex: a Internet']),'A diferença é o alcance: LAN é local, MAN cobre uma cidade e WAN liga redes a longas distâncias.'),
+L('PAN vs LAN','PAN vs LAN',C(['🎧','PAN','Bluetooth e dispositivos pessoais, poucos metros'],['🏢','LAN','Computadores e impressoras de um escritório']),'PAN é a rede pessoal à tua volta (~10 m). LAN cobre um espaço maior, como um edifício.'),
+L('Internet=WAN','Internet como WAN',F('💻 Dispositivo','📡 Router','🏭 ISP','🌍 Internet','🖥️ Servidor'),'A Internet é a maior WAN do mundo: o teu router liga ao ISP (operador), que te liga a milhares de outras redes e servidores.'),
+L('Cliente/Servidor','Cliente e servidor',F('📱 CLIENTE','📤 PEDIDO','🖥️ SERVIDOR','📥 RESPOSTA','📱 CLIENTE'),'O cliente faz um pedido (request) e o servidor devolve uma resposta (response). Ex: o browser pede uma página e o servidor envia-a.'),
+L('Hardware','Hardware de rede',C(['📡','MODEM','Converte o sinal do operador'],['🔀','ROTEADOR','Encaminha dados e cria o Wi-Fi'],['🔌','SWITCH','Liga vários dispositivos por cabo na LAN']),'Modem = porta de entrada. Roteador = distribui e escolhe caminhos. Switch = liga equipamentos dentro da rede local.'),
+L('Protocolos','Protocolos',C(['🌐','HTTP','Páginas web'],['🔒','HTTPS','Web segura'],['📖','DNS','Nome → IP'],['🏷️','DHCP','Atribui IPs'],['📂','FTP','Transferir ficheiros'],['✅','TCP','Entrega fiável'],['📍','IP','Endereço e rota']),'Protocolo é um conjunto de regras que permite a dispositivos diferentes se entenderem, como uma língua comum.'),
+L('Fio vs Wi-Fi','Rede com fio vs sem fio',C(['🔌','FIO','Mais rápida, estável e segura; sem mobilidade'],['📶','WI-FI','Móvel e prática; mais interferência e risco']),'Compara velocidade, mobilidade, estabilidade, interferência e segurança. Cabo para estabilidade; Wi-Fi para liberdade.'),
+L('Topologia','Topologia de rede',C(['⭐','Estrela','Tudo ligado a um ponto central'],['➖','Barramento','Todos num só cabo'],['⭕','Anel','Cada um liga ao seguinte'],['🕸️','Malha','Ligações múltiplas entre nós']),'Topologia é a forma como os dispositivos estão organizados. A estrela é a mais comum hoje.'),
+L('Internet vs Web','Internet vs Web',C(['🛣️','INTERNET','A infraestrutura: cabos, routers, protocolos'],['📄','WEB','Um serviço sobre a Internet: sites e browsers']),'A Internet é a estrada; a Web é um dos veículos. Email e jogos online também usam a Internet sem serem Web.'),
+L('IP','Endereço IP',C(['🔢','IPv4','192.168.1.10 (32 bits)'],['🔣','IPv6','Muito mais endereços (128 bits)'],['🏠','Privado','Usado dentro da rede local'],['🌍','Público','Visto na Internet']),'O IP identifica e localiza cada dispositivo, como a morada de uma casa.'),
+L('TCP/IP','TCP/IP',F('APLICAÇÃO: HTTP, DNS','TRANSPORTE: TCP/UDP','INTERNET: IP','ACESSO À REDE: Wi-Fi, Ethernet'),'Aplicação = serviços usados. Transporte = entrega fiável. Internet = endereços e rotas. Acesso à rede = ligação física.')
+]},
+gestao:{theme:'gold',kicker:'GESTÃO DE CONTAS',title:'GESTOR DE CONTAS JÚNIOR',subtitle:'18 temas, siglas e termos para a entrevista',
+summary:[F('Cliente','Relacionamento','Valor','Retenção','Expansão'),'Conhece o cliente, cuida da relação, entrega valor. Um júnior mostra curiosidade, organização, empatia e vontade de aprender.'],
+lessons:[
+L('Papel','O papel do Gestor de Contas',C(['🤝','Relacionamento'],['👀','Acompanhar clientes'],['🔍','Necessidades'],['🛡️','Proteger receita'],['🚀','Criar oportunidades']),'Acompanha o cliente depois da venda, gere a relação, identifica necessidades e ajuda a manter e fazer crescer a receita.'),
+L('vs Vendas','Gestor de Contas vs Vendas',C(['🧑‍💼','GESTOR DE CONTAS','Relacionamento, retenção, expansão'],['🎯','VENDAS','Aquisição, prospeção, conversão']),'Funções complementares: vendas conquista, o gestor cuida e expande. Nenhuma é superior.'),
+L('Priorizar','Priorização da carteira',C(['🔥','Urgente + importante','Agir já'],['📅','Importante','Planear'],['📨','Urgente','Delegar/responder'],['🗂️','Resto','Acompanhar'],),'Prioriza por valor, risco, potencial, urgência e impacto. Carteira = clientes sob a tua responsabilidade.'),
+L('Ciclo de vida','Ciclo de vida do cliente',F('AQUISIÇÃO','ONBOARDING','ADOÇÃO','EXPANSÃO','RETENÇÃO'),'Cada fase pede uma atitude: integrar bem, garantir uso, expandir e renovar.'),
+L('Customer Success','Customer Success',C(['🎯','Resultados'],['📊','Adoção'],['💎','Valor percebido'],['🛡️','Prevenir churn']),'CS ajuda o cliente a obter resultados com o serviço. O gestor usa esses dados para reter e fazer crescer a conta.'),
+L('Insatisfeito','Cliente insatisfeito',F('OUVIR','ENTENDER','VALIDAR','RESOLVER','ACOMPANHAR'),'Não interrompas nem te defendas. Mostra que percebeste, propõe solução com prazos e faz follow-up até ficar resolvido.'),
+L('Upsell/Cross-sell','Upsell e Cross-sell',C(['⬆️','UPSELL','Versão ou plano superior'],['↔️','CROSS-SELL','Produto ou serviço complementar']),'Ex: Upsell = Básico → Premium. Cross-sell = suporte técnico + cibersegurança. Ambos aumentam receita sem novos clientes.'),
+L('QBR','Reunião QBR',F('RESULTADOS','MÉTRICAS','PROBLEMAS','OPORTUNIDADES','PRÓXIMOS PASSOS'),'QBR = Quarterly Business Review: reunião trimestral para rever resultados e alinhar o que vem a seguir.'),
+L('Métricas','Métricas',C(['⭐','NPS','Recomendaria?'],['😊','CSAT','Satisfação'],['📉','Churn','Cancelamentos'],['🔁','NRR','Receita retida'],['📆','MRR','Receita mensal'],['🗓️','ARR','Receita anual']),'Cada métrica mostra um lado da saúde da conta: satisfação, perdas e receita.'),
+L('Expectativas','Gestão de expectativas',F('EXPECTATIVA','ALINHAMENTO','PRAZO','ENTREGA','ACOMPANHAMENTO'),'Sê honesto e claro, explica o motivo, dá alternativas e prazos reais. Nunca prometas o que não podes entregar.'),
+L('CRM','CRM',C(['👥','Clientes'],['📇','Contactos'],['💡','Oportunidades'],['✅','Atividades'],['🕘','Histórico'],['🔽','Pipeline']),'CRM = Customer Relationship Management: regista tudo sobre o cliente. Ex: Salesforce, HubSpot, Zoho.'),
+L('Oportunidades','Identificar oportunidades',C(['📈','Mais utilização'],['🏢','Novos departamentos'],['🆕','Novas necessidades'],['🔁','Reclamações repetidas'],['🌱','Cliente a crescer']),'Escuta o cliente, observa o uso do serviço e o que ainda não utiliza. Oportunidade = necessidade não atendida.'),
+L('30-60-90','Plano 30-60-90 dias',F('30 DIAS: aprender e observar','60 DIAS: executar e melhorar','90 DIAS: consolidar e gerar resultados'),'Nos primeiros 30 dias conheces pessoas e histórico; aos 60 tratas problemas; aos 90 apresentas plano e quick wins.'),
+L('Equipas','Equipas internas',C(['🎯','Vendas'],['🎧','Suporte'],['💰','Financeiro'],['🧩','Produto'],['⚙️','Operações']),'O gestor é a ponte: traduz o que o cliente precisa, define prioridades com as equipas e acompanha a execução.'),
+L('SLA','SLA',F('PEDIDO','SLA','PRAZO','RESPOSTA','RESOLUÇÃO'),'SLA = Service Level Agreement: acordo sobre tempos de resposta, resolução e disponibilidade. O gestor acompanha o cumprimento.'),
+L('Medir sucesso','Como medir o sucesso',C(['💰','Receita'],['🔒','Retenção'],['😊','Satisfação'],['📊','Adoção'],['🚀','Expansão']),'Clientes mantidos, contas a crescer, clientes satisfeitos, metas cumpridas e boas relações internas e externas.'),
+L('Retenção','Retenção',F('VALOR + RELACIONAMENTO + ACOMPANHAMENTO','= RETENÇÃO'),'Reduz churn: percebe os motivos de saída, aumenta o valor percebido e acompanha de forma preventiva, antes de o cliente pensar em sair.'),
+L('Segmentação ABC','Segmentação ABC',C(['🅰️','A','Maior importância estratégica'],['🅱️','B','Importância intermédia'],['©️','C','Menor impacto relativo']),'A classificação segue critérios da empresa: valor, potencial, risco e importância estratégica.')
+],
+siglas:[['AM','Account Manager','Gestor de Contas'],['CS','Customer Success','Sucesso do Cliente'],['CRM','Customer Relationship Management','Gestão do relacionamento'],['QBR','Quarterly Business Review','Revisão trimestral'],['NPS','Net Promoter Score','Probabilidade de recomendar'],['CSAT','Customer Satisfaction Score','Satisfação do cliente'],['NRR','Net Revenue Retention','Retenção da receita'],['MRR','Monthly Recurring Revenue','Receita recorrente mensal'],['ARR','Annual Recurring Revenue','Receita recorrente anual'],['SLA','Service Level Agreement','Nível de serviço acordado'],['B2B','Business to Business','Empresa que vende a empresas'],['MSP','Managed Service Provider','Serviços de TI geridos'],['KPI','Key Performance Indicator','Indicador de desempenho'],['ROI','Return on Investment','Retorno do investimento'],['LTV','Lifetime Value','Valor total de um cliente'],['CAC','Customer Acquisition Cost','Custo de conquistar um cliente'],['Churn','Churn rate','% de clientes perdidos'],['SOW','Statement of Work','Descrição do trabalho contratado']],
+termos:[['Carteira','Conjunto de clientes sob responsabilidade do gestor'],['Pipeline','Oportunidades comerciais em andamento'],['Stakeholder','Pessoa com influência ou interesse na conta'],['Upsell','Vender versão superior do que já existe'],['Cross-sell','Vender produto complementar'],['Quick Win','Pequeno resultado obtido rapidamente'],['Onboarding','Integração inicial do cliente'],['Churn','Perda ou cancelamento de clientes'],['Ticket','Pedido ou problema registado para tratamento'],['Lead','Contacto com potencial interesse'],['Prospect','Potencial cliente já qualificado'],['Account','Conta: cliente ou empresa acompanhada'],['Renewal','Renovação do contrato'],['Adoption','Grau de utilização do serviço'],['Retention','Capacidade de manter clientes'],['Escala','Aumentar sem aumentar custos na mesma proporção'],['Touchpoint','Ponto de contacto entre empresa e cliente']]}
+};
+
+/* ========== EXPLICAÇÕES INDIVIDUAIS (chave = rótulo em minúsculas; "area.card:rotulo" tem prioridade) ========== */
+const TIP={
+'dispositivo':'Qualquer equipamento ligado à rede: computador, telemóvel, impressora ou servidor.',
+'rede':'O conjunto de dispositivos ligados que trocam dados e partilham recursos.',
+'comunicação':'Troca de informação entre dispositivos e pessoas: mensagens, chamadas, email e vídeo.',
+'partilha':'Vários utilizadores usam os mesmos recursos, como ficheiros, internet e impressoras.',
+'acesso a recursos':'Permite chegar a serviços e dados que não estão no teu próprio equipamento.',
+'centralização':'Dados e gestão ficam num ponto central, o que facilita controlo e cópias de segurança.',
+'conectividade':'A capacidade de ligar equipamentos e pessoas, perto ou longe.',
+'produtividade':'Menos tempo perdido: as equipas trabalham em conjunto sobre a mesma informação.',
+'gestão':'Um controlo central permite configurar, monitorizar e proteger todos os equipamentos.',
+'escalabilidade':'É fácil acrescentar novos dispositivos ou utilizadores sem refazer a rede.',
+'ataques':'Tentativas de invadir ou sobrecarregar a rede, como intrusões e ataques DDoS.',
+'malware':'Software malicioso, como vírus e ransomware, que se propaga pela rede.',
+'roubo de dados':'Informação pessoal ou empresarial é intercetada ou copiada por terceiros.',
+'acesso não autorizado':'Alguém sem permissão entra na rede ou em sistemas, por exemplo com palavras-passe fracas.',
+'falhas':'Avarias de equipamento, cabos ou software que interrompem o funcionamento.',
+'indisponibilidade':'Se a rede cai, todos os que dependem dela ficam sem acesso.',
+'lan':'Local Area Network: rede local de casa, escritório ou escola.',
+'man':'Metropolitan Area Network: liga várias redes dentro de uma cidade.',
+'wan':'Wide Area Network: liga redes a longas distâncias, entre cidades e países. A Internet é uma WAN.',
+'pan':'Personal Area Network: rede pessoal de poucos metros, como Bluetooth entre telemóvel e auscultadores.',
+'router':'Equipamento que liga a tua rede à Internet e encaminha os dados.',
+'isp':'Internet Service Provider: o operador que te dá acesso à Internet.',
+'internet':'A rede global que liga milhões de redes através de cabos, routers e protocolos.',
+'redes.lesson-15:internet':'Camada que trata dos endereços IP e do caminho que os pacotes seguem.',
+'servidor':'Computador que oferece um serviço e responde aos pedidos dos clientes.',
+'redes.lesson-08:cliente':'Dispositivo ou programa que pede um serviço, como o teu browser.',
+'pedido':'O que o cliente solicita: uma página, um serviço ou a resolução de um problema.',
+'resposta':'O que é devolvido ao pedido: os dados pedidos ou a solução do problema.',
+'modem':'Converte o sinal do operador (fibra, cabo, linha) em dados que a tua rede entende.',
+'roteador':'Encaminha dados entre redes e normalmente cria o Wi-Fi de casa.',
+'switch':'Liga vários dispositivos por cabo dentro da mesma rede local.',
+'http':'HyperText Transfer Protocol: regras para pedir e enviar páginas web.',
+'https':'Versão segura do HTTP, com os dados cifrados.',
+'dns':'Traduz nomes como google.com em endereços IP.',
+'dhcp':'Atribui automaticamente um endereço IP a cada dispositivo que entra na rede.',
+'ftp':'File Transfer Protocol: serve para enviar e receber ficheiros entre computadores.',
+'tcp':'Garante que os dados chegam completos e pela ordem certa.',
+'ip':'Dá um endereço a cada dispositivo e indica o caminho dos dados.',
+'fio':'Cabo Ethernet: mais rápido, estável e seguro, mas sem mobilidade.',
+'wi-fi':'Sem cabos: prática e móvel, mas sujeita a interferências e mais exposta a intrusos.',
+'estrela':'Todos os dispositivos ligam a um ponto central, como um switch. É a mais comum.',
+'barramento':'Todos partilham o mesmo cabo principal. Simples, mas uma falha afeta todos.',
+'anel':'Cada dispositivo liga ao seguinte, formando um círculo.',
+'malha':'Os dispositivos têm várias ligações entre si, o que dá muitos caminhos alternativos.',
+'web':'World Wide Web: os sites e páginas que abres no browser. É só um serviço da Internet.',
+'ipv4':'Endereço de 32 bits, como 192.168.1.10. Já há poucos disponíveis.',
+'ipv6':'Endereço de 128 bits, criado para haver endereços quase ilimitados.',
+'privado':'Endereço usado dentro da rede local, não visível na Internet.',
+'público':'Endereço com que a tua rede é vista na Internet.',
+'aplicação':'Camada dos serviços que usas, como HTTP e DNS.',
+'transporte':'Camada que divide e entrega os dados, com TCP (fiável) ou UDP (rápido).',
+'acesso à rede':'Camada da ligação física e local: Wi-Fi, Ethernet e placas de rede.',
+'conexão':'A ligação por cabo ou sem fios que permite aos dispositivos comunicarem.',
+'protocolos':'Regras comuns que permitem a dispositivos diferentes entenderem-se.',
+'relacionamento':'Confiança construída com contactos regulares, honestidade e acompanhamento.',
+'acompanhar clientes':'Estar atento ao uso do serviço, à satisfação e a problemas, antes que se agravem.',
+'necessidades':'O que o cliente precisa para atingir os seus objetivos, mesmo que ainda não tenha pedido.',
+'proteger receita':'Evitar cancelamentos e perdas, mantendo os clientes satisfeitos.',
+'criar oportunidades':'Identificar onde o cliente pode comprar mais ou beneficiar de novos serviços.',
+'gestor de contas':'Foca-se em relacionamento, retenção e expansão de clientes que já compraram.',
+'vendas':'Foca-se em aquisição: prospeção e conversão de novos clientes. Trabalha em conjunto com o gestor.',
+'urgente + importante':'Precisa de ação imediata e tem grande impacto. Ex: cliente valioso a ameaçar sair.',
+'importante':'Tem impacto alto mas sem pressa: planeia e agenda.',
+'urgente':'Pede resposta rápida, mas com pouco impacto: responde ou delega.',
+'resto':'Nem urgente nem importante: acompanha com menos esforço.',
+'aquisição':'Fase em que o prospect passa a cliente.',
+'onboarding':'Integração inicial do cliente: configurar, formar e garantir que começa bem.',
+'adoção':'O grau em que o cliente usa realmente o serviço no dia a dia.',
+'expansão':'Aumentar o valor da conta com mais serviços, licenças ou versões superiores.',
+'retenção':'Manter o cliente e renovar contratos, evitando o churn.',
+'resultados':'O que o cliente conseguiu com o serviço, medido em números e objetivos alcançados.',
+'valor percebido':'O benefício que o cliente sente que recebe, comparado com o que paga.',
+'prevenir churn':'Detetar sinais de risco cedo e agir antes de o cliente cancelar.',
+'ouvir':'Deixa o cliente falar, sem interromper nem te defender.',
+'entender':'Percebe a causa real do problema e o impacto no cliente.',
+'validar':'Mostra que compreendeste e que a preocupação é legítima.',
+'resolver':'Apresenta uma solução ou plano de ação com prazos reais.',
+'acompanhar':'Faz follow-up até o problema estar mesmo resolvido.',
+'upsell':'Vender uma versão ou plano superior do que o cliente já tem. Ex: Básico para Premium.',
+'cross-sell':'Vender um produto ou serviço complementar. Ex: suporte técnico e cibersegurança.',
+'métricas':'Números que mostram a saúde da conta: uso, satisfação, tickets e receita.',
+'problemas':'Questões abertas, atrasos e reclamações que é preciso tratar.',
+'oportunidades':'Potenciais negócios ou expansões que podem ser acompanhados, por exemplo através do CRM.',
+'próximos passos':'Ações, responsáveis e datas combinadas no fim da reunião.',
+'nps':'Net Promoter Score: mede a probabilidade de o cliente nos recomendar.',
+'csat':'Customer Satisfaction Score: mede a satisfação com um serviço ou interação.',
+'churn':'Percentagem de clientes que cancelam num período.',
+'nrr':'Net Revenue Retention: receita mantida ou aumentada dos clientes existentes. Acima de 100% é bom sinal.',
+'mrr':'Monthly Recurring Revenue: receita recorrente por mês.',
+'arr':'Annual Recurring Revenue: receita recorrente por ano.',
+'expectativa':'O que o cliente espera receber, em qualidade, prazo e resultado.',
+'alinhamento':'Confirmar com o cliente o que é possível, o que não é e porquê.',
+'prazo':'A data ou duração realista combinada, sem prometer o impossível.',
+'entrega':'O resultado efetivamente entregue ao cliente, conforme combinado.',
+'acompanhamento':'Verificar depois da entrega se o cliente ficou satisfeito e se há novos pedidos.',
+'clientes':'Empresas ou pessoas com relação comercial com a organização. No CRM guarda-se a informação e o histórico.',
+'contactos':'Pessoas associadas a uma conta: responsáveis, gestores, compradores e outros intervenientes.',
+'atividades':'Ações realizadas ou planeadas: chamadas, reuniões, emails e tarefas.',
+'histórico':'Acontecimentos e interações anteriores relacionados com o cliente.',
+'pipeline':'Mostra as oportunidades e o estágio em que cada negócio se encontra.',
+'mais utilização':'Se o uso do serviço cresce, o cliente pode precisar de um plano maior.',
+'novos departamentos':'Outras áreas do cliente podem também beneficiar do serviço.',
+'novas necessidades':'Mudanças no negócio do cliente que criam procura por outros serviços.',
+'reclamações repetidas':'Um problema recorrente pode revelar uma falha ou um serviço em falta.',
+'cliente a crescer':'Um cliente em expansão tende a precisar de mais capacidade e serviços.',
+'30 dias':'Aprender e observar: conhecer o cliente, as pessoas envolvidas e o histórico.',
+'60 dias':'Executar e melhorar: identificar necessidades, problemas e riscos.',
+'90 dias':'Consolidar e gerar resultados: plano de ação e primeiros quick wins.',
+'suporte':'Resolve problemas técnicos. O gestor acompanha os tickets do cliente com esta equipa.',
+'financeiro':'Trata de faturação, pagamentos e contratos. Ajuda em renovações e preços.',
+'produto':'Desenvolve o serviço. O gestor leva-lhe o feedback e as necessidades dos clientes.',
+'operações':'Executa a entrega do serviço. O gestor alinha prazos e prioridades.',
+'sla':'Service Level Agreement: acordo sobre tempos de resposta, resolução e disponibilidade.',
+'resolução':'O momento em que o problema fica realmente resolvido, dentro do prazo do SLA.',
+'receita':'O valor faturado pela carteira, comparado com as metas.',
+'satisfação':'Como os clientes avaliam o serviço, por exemplo através do CSAT e do NPS.',
+'valor + relacionamento + acompanhamento':'Os três ingredientes juntos: entregar valor, cuidar da relação e acompanhar de forma preventiva.',
+'a':'Clientes de maior importância estratégica. Recebem mais atenção.',
+'b':'Clientes de importância intermédia, muitas vezes com potencial de crescimento.',
+'c':'Clientes de menor impacto relativo, geridos com mais eficiência e menos esforço.',
+'gestao.resumo:cliente':'A empresa ou pessoa a quem prestas serviço. Tudo começa por conhecê-la bem.',
+'valor':'O benefício concreto que o cliente sente ao usar o serviço.'
+};
+const norm=s=>s.replace(/^[^\p{L}\p{N}]+/u,'').split(':')[0].trim().toLowerCase();
+
+/* ========== 2. ESTADO ========== */
+const state={area:'redes',all:false};
+const $=s=>document.querySelector(s),app=$('#app'),tabs=$('#tabs');
+let obs;
+
+/* ========== 3. RENDERIZAÇÃO ========== */
+const tableHTML=(h,rows,id)=>`<div class="tbl"><table><thead><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody ${id?`id="${id}"`:''}>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+
+function cardHTML(id,num,title,diagram,exp){
+  return `<section class="card" id="${id}" data-tab="${id}"><div class="ch"><span class="num">${num}</span><h2>${title}</h2></div><div class="dg">${diagram}</div>`+
+  (exp?`<button class="ex" aria-expanded="false" aria-controls="${id}-x"><b style="font-weight:400">Ver explicação</b><span>▾</span></button><div class="xp" id="${id}-x"><div><p>${exp}</p></div></div>`:'')+`</section>`;
+}
+
+function renderApp(){
+  const d=studyData[state.area];
+  document.body.dataset.theme=d.theme;
+  $('#h-title').textContent=d.title;$('#h-sub').textContent=d.subtitle;
+  document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===state.area));
+  state.all=false;
+  renderLessons(d);renderTabs(d);observe();
+  updateBar();window.scrollTo(0,0);
+}
+
+function renderLessons(d){
+  let h=`<div class="tools"><button id="all">Mostrar todas as explicações</button></div>`;
+  h+=d.lessons.map((l,i)=>cardHTML('lesson-'+String(i+1).padStart(2,'0'),String(i+1).padStart(2,'0'),l.title,l.diagram,l.exp)).join('');
+  if(d.siglas){
+    h+=`<div class="sec">📚 SIGLAS</div><section class="card" id="siglas" data-tab="siglas"><div class="ch"><span class="num">★</span><h2>Siglas principais</h2></div>${tableHTML(['Sigla','Significado','Explicação'],d.siglas)}</section>`;
+    h+=`<div class="sec">📖 TERMOS</div><section class="card" id="termos" data-tab="termos"><div class="ch"><span class="num">★</span><h2>Glossário</h2></div><input id="q" type="search" placeholder="🔎 Pesquisar termo..." aria-label="Pesquisar termo"><div id="g"></div></section>`;
+  }
+  h+=`<div class="sec">🎯 RESUMO</div>`+cardHTML('resumo','🎯','Resumo',d.summary[0],'')+`<p class="msg">${d.summary[1]}</p>`;
+  app.innerHTML=h;enhance();
+  if(d.termos)renderGlossary('');
+}
+
+function enhance(){
+  document.querySelectorAll('.card').forEach(c=>{
+    let n=0;
+    c.querySelectorAll('.dg .bx,.dg .st').forEach(el=>{
+      const raw=(el.querySelector('b')||el).textContent,k=norm(raw);
+      const t=TIP[state.area+'.'+c.id+':'+k]||TIP[k];
+      if(!t)return;
+      el.dataset.t=t;
+      el.dataset.l=((el.querySelector('i')?el.querySelector('i').textContent+' ':'')+raw.split(':')[0]).toUpperCase();
+      el.setAttribute('role','button');el.tabIndex=0;el.setAttribute('aria-pressed','false');n++;
+    });
+    if(n)c.querySelector('.dg').insertAdjacentHTML('afterend','<div class="tp" aria-live="polite"><div><div class="tpi"><b></b><p></p></div></div></div>');
+  });
+}
+function pickItem(el){
+  const c=el.closest('.card'),tp=c.querySelector('.tp'),same=el.classList.contains('sel');
+  c.querySelectorAll('.sel').forEach(x=>{x.classList.remove('sel');x.setAttribute('aria-pressed','false')});
+  if(same){tp.classList.remove('open');return}
+  el.classList.add('sel');el.setAttribute('aria-pressed','true');
+  tp.querySelector('b').textContent=el.dataset.l;tp.querySelector('p').textContent=el.dataset.t;
+  tp.classList.add('open');
+}
+function renderGlossary(q){
+  const d=studyData.gestao,f=d.termos.filter(t=>t.join(' ').toLowerCase().includes(q.toLowerCase().trim()));
+  $('#g').innerHTML=f.length?tableHTML(['Termo','Definição'],f):'<p class="msg">Nenhum termo encontrado.</p>';
+}
+function filterGlossary(e){renderGlossary(e.target.value)}
+
+function renderTabs(d){
+  const items=d.lessons.map((l,i)=>['lesson-'+String(i+1).padStart(2,'0'),String(i+1).padStart(2,'0')+' '+l.tab]);
+  if(d.siglas)items.push(['siglas','Siglas'],['termos','Termos']);
+  items.push(['resumo','Resumo']);
+  tabs.innerHTML=items.map(([id,t])=>`<button class="pill" data-target="${id}">${t}</button>`).join('');
+  setActiveTab(items[0][0]);
+}
+
+/* ========== 4. NAVEGAÇÃO ========== */
+function setActiveTab(id){
+  tabs.querySelectorAll('.pill').forEach(p=>{
+    const on=p.dataset.target===id;p.classList.toggle('on',on);
+    if(on)tabs.scrollTo({left:p.offsetLeft-tabs.clientWidth/2+p.offsetWidth/2,behavior:'smooth'});
+  });
+}
+function barOffset(){
+  const t=document.querySelector('.top');
+  return (parseFloat(getComputedStyle(t).top)||0)+t.offsetHeight;
+}
+function updateBar(){document.documentElement.style.setProperty('--bar',(barOffset()+12)+'px')}
+function scrollToLesson(id){
+  const el=document.getElementById(id);if(!el)return;
+  state.lock=Date.now()+1200;
+  app.classList.add('nt');                       /* fecha as outras SEM animação, para o destino não se mover */
+  document.querySelectorAll('.card').forEach(c=>{if(c!==el)setOpen(c,false)});
+  void app.offsetHeight;
+  app.classList.remove('nt');
+  setOpen(el,true);                              /* abre só o destino (cresce para baixo) */
+  setActiveTab(id);
+  updateBar();
+  const y=el.getBoundingClientRect().top+window.scrollY-barOffset()-12;
+  window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+}
+function observe(){
+  obs&&obs.disconnect();
+  obs=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&Date.now()>(state.lock||0)&&setActiveTab(e.target.dataset.tab)),{rootMargin:'-120px 0px -65% 0px'});
+  document.querySelectorAll('[data-tab]').forEach(c=>obs.observe(c));
+}
+
+/* ========== 5. INTERAÇÕES ========== */
+function setOpen(card,open){
+  const b=card.querySelector('.ex');if(!b)return;
+  b.setAttribute('aria-expanded',open);
+  b.firstChild.textContent=open?'Ocultar explicação':'Ver explicação';
+  card.querySelector('.xp').classList.toggle('open',open);
+}
+function toggleExplanation(card){setOpen(card,card.querySelector('.ex').getAttribute('aria-expanded')!=='true')}
+function toggleAll(){
+  state.all=!state.all;
+  document.querySelectorAll('.card').forEach(c=>setOpen(c,state.all));
+  $('#all').textContent=state.all?'Ocultar todas as explicações':'Mostrar todas as explicações';
+}
+function switchSection(k){if(k!==state.area){state.area=k;renderApp()}}
+
+/* ========== 6. EVENTOS / RESPONSIVIDADE ========== */
+document.querySelector('.seg').addEventListener('click',e=>{const b=e.target.closest('button');b&&switchSection(b.dataset.k)});
+tabs.addEventListener('click',e=>{const p=e.target.closest('.pill');p&&scrollToLesson(p.dataset.target)});
+app.addEventListener('click',e=>{
+  const it=e.target.closest('[data-t]');if(it)return pickItem(it);
+  const x=e.target.closest('.ex');if(x)return toggleExplanation(x.closest('.card'));
+  if(e.target.id==='all')toggleAll();
+});
+app.addEventListener('keydown',e=>{const it=e.target.closest&&e.target.closest('[data-t]');if(it&&(e.key==='Enter'||e.key===' ')){e.preventDefault();pickItem(it)}});
+app.addEventListener('input',e=>{if(e.target.id==='q')filterGlossary(e)});
+window.addEventListener('resize',updateBar);
+renderApp();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
