@@ -74,6 +74,37 @@ td:nth-child(2){color:var(--t)}
 .tpi b{display:block;color:var(--a);font:.72rem "Space Mono",monospace;letter-spacing:1px;margin-bottom:6px;overflow-wrap:anywhere}
 .tpi p{font-size:.85rem;color:#c3ccdb;line-height:1.6}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== V2 INTEGRADA — mantém o design original ===== */
+.studybar{background:var(--s);border:1px solid var(--b);border-radius:16px;padding:14px;margin-bottom:18px}
+.studytop{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px}
+.studytitle{font:700 .72rem "Space Mono";color:var(--a);letter-spacing:1px}
+.studyxp{font:.7rem "Space Mono";color:var(--m)}
+.progressbar{height:8px;border-radius:99px;background:var(--s2);overflow:hidden;border:1px solid var(--b)}
+.progressbar>i{display:block;height:100%;width:0;background:var(--a);transition:width .35s ease}
+.studyactions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.studyactions button,.complete,.jump{padding:9px 12px;border-radius:10px;border:1px solid rgba(var(--rgb),.35);background:rgba(var(--rgb),.07);color:var(--a);font:.68rem "Space Mono";cursor:pointer}
+.complete.done{color:var(--g);border-color:rgba(16,185,129,.45);background:rgba(16,185,129,.08)}
+.v2section{margin-top:28px}
+.v2title{font:.72rem "Space Mono";color:var(--a);letter-spacing:2px;margin:0 0 12px}
+.v2panel{background:var(--s);border:1px solid var(--b);border-radius:16px;padding:16px;margin-bottom:12px}
+.v2grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.v2stat{padding:12px;border:1px solid var(--b);background:var(--s2);border-radius:12px}
+.v2stat small{display:block;color:var(--m);font:.66rem "Space Mono"}
+.v2stat b{display:block;margin-top:4px;color:var(--a);font-size:1.1rem}
+.exq{background:var(--s);border:1px solid var(--b);border-radius:14px;padding:15px;margin-bottom:10px}
+.opt{display:block;width:100%;text-align:left;margin-top:7px;padding:10px 12px;border-radius:9px;border:1px solid var(--b);background:var(--s2);color:var(--t);font-size:.78rem;cursor:pointer}
+.opt.ok{border-color:#10b981;background:rgba(16,185,129,.1);color:#6ee7b7}
+.opt.no{border-color:#ef4444;background:rgba(239,68,68,.1);color:#fca5a5}
+.achgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.ach{padding:13px;text-align:center;border:1px solid var(--b);background:var(--s2);border-radius:12px;opacity:.42}
+.ach.on{opacity:1;border-color:rgba(var(--rgb),.5)}
+.ach i{display:block;font-style:normal;font-size:1.3rem}.ach b{display:block;font-size:.75rem;margin-top:4px}.ach small{display:block;color:var(--m);font-size:.62rem;margin-top:3px}
+.certbox{text-align:center;padding:22px;border:1px solid rgba(var(--rgb),.45);border-radius:14px;background:rgba(var(--rgb),.05)}
+.certbox h3{color:var(--a);font-family:"Space Mono";letter-spacing:1px;margin:5px 0}
+.danger{color:#fca5a5!important;border-color:rgba(239,68,68,.4)!important}
+@media(max-width:600px){.v2grid{grid-template-columns:repeat(2,1fr)}.achgrid{grid-template-columns:repeat(2,1fr)}}
+
 </style>
 </head>
 <body data-theme="cyan">
@@ -269,7 +300,15 @@ const TIP={
 const norm=s=>s.replace(/^[^\p{L}\p{N}]+/u,'').split(':')[0].trim().toLowerCase();
 
 /* ========== 2. ESTADO ========== */
-const state={area:'redes',all:false};
+const savedV2=JSON.parse(localStorage.getItem('guia_estudo_v2')||'null');
+const state=Object.assign({area:'redes',all:false,xp:0,done:{redes:[],gestao:[]},answers:{},started:Date.now()},savedV2||{});
+state.done=state.done||{redes:[],gestao:[]};state.answers=state.answers||{};state.xp=state.xp||0;
+const persist=()=>localStorage.setItem('guia_estudo_v2',JSON.stringify(state));
+const lessonCount=()=>studyData[state.area].lessons.length;
+const totalLessons=()=>studyData.redes.lessons.length+studyData.gestao.lessons.length;
+const completedTotal=()=>state.done.redes.length+state.done.gestao.length;
+const percent=()=>Math.round(completedTotal()/totalLessons()*100);
+const level=()=>Math.floor(state.xp/500)+1;
 const $=s=>document.querySelector(s),app=$('#app'),tabs=$('#tabs');
 let obs;
 
@@ -277,8 +316,14 @@ let obs;
 const tableHTML=(h,rows,id)=>`<div class="tbl"><table><thead><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody ${id?`id="${id}"`:''}>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 
 function cardHTML(id,num,title,diagram,exp){
-  return `<section class="card" id="${id}" data-tab="${id}"><div class="ch"><span class="num">${num}</span><h2>${title}</h2></div><div class="dg">${diagram}</div>`+
-  (exp?`<button class="ex" aria-expanded="false" aria-controls="${id}-x"><b style="font-weight:400">Ver explicação</b><span>▾</span></button><div class="xp" id="${id}-x"><div><p>${exp}</p></div></div>`:'')+`</section>`;
+  const n=parseInt(String(num).replace(/\D/g,''),10);
+  const done=state.done[state.area].includes(n);
+  return `<section class="card" id="${id}" data-tab="${id}" data-lesson="${n}">
+    <div class="ch"><span class="num">${num}</span><h2>${title}</h2></div>
+    <div class="dg">${diagram}</div>
+    ${exp?`<button class="ex" aria-expanded="false" aria-controls="${id}-x"><b style="font-weight:400">Ver explicação</b><span>▾</span></button><div class="xp" id="${id}-x"><div><p>${exp}</p></div></div>`:''}
+    ${Number.isFinite(n)&&n>0?`<button class="complete ${done?'done':''}" data-complete="${n}">${done?'✓ Aula concluída':'□ Marcar aula como concluída'} <span>+100 XP</span></button>`:''}
+  </section>`;
 }
 
 function renderApp(){
@@ -292,17 +337,85 @@ function renderApp(){
 }
 
 function renderLessons(d){
-  let h=`<div class="tools"><button id="all">Mostrar todas as explicações</button></div>`;
+  const currentDone=state.done[state.area].length;
+  let h=`<div class="studybar">
+    <div class="studytop"><span class="studytitle">PROGRESSO · ${d.kicker}</span><span class="studyxp">${state.xp} XP · Nível ${level()}</span></div>
+    <div class="progressbar"><i style="width:${percent()}%"></i></div>
+    <div class="studytop" style="margin-top:7px;margin-bottom:0"><span class="studyxp">${completedTotal()}/${totalLessons()} aulas concluídas</span><span class="studyxp">${percent()}%</span></div>
+    <div class="studyactions">
+      <button id="all">Mostrar todas as explicações</button>
+      <button class="jump" data-jump="v2-exercises">📝 Exercícios</button>
+      <button class="jump" data-jump="v2-progress">🎯 Progresso</button>
+    </div>
+  </div>`;
   h+=d.lessons.map((l,i)=>cardHTML('lesson-'+String(i+1).padStart(2,'0'),String(i+1).padStart(2,'0'),l.title,l.diagram,l.exp)).join('');
   if(d.siglas){
     h+=`<div class="sec">📚 SIGLAS</div><section class="card" id="siglas" data-tab="siglas"><div class="ch"><span class="num">★</span><h2>Siglas principais</h2></div>${tableHTML(['Sigla','Significado','Explicação'],d.siglas)}</section>`;
     h+=`<div class="sec">📖 TERMOS</div><section class="card" id="termos" data-tab="termos"><div class="ch"><span class="num">★</span><h2>Glossário</h2></div><input id="q" type="search" placeholder="🔎 Pesquisar termo..." aria-label="Pesquisar termo"><div id="g"></div></section>`;
   }
   h+=`<div class="sec">🎯 RESUMO</div>`+cardHTML('resumo','🎯','Resumo',d.summary[0],'')+`<p class="msg">${d.summary[1]}</p>`;
+  h+=v2Extras();
   app.innerHTML=h;enhance();
   if(d.termos)renderGlossary('');
+  renderV2Extras();
 }
 
+
+const V2Q=[
+ ['Qual é a função principal de um router?',['Editar documentos','Encaminhar tráfego entre redes','Criar palavras-passe','Substituir switches'],1],
+ ['A Web é:',['A infraestrutura física da Internet','Um dos serviços que funciona sobre a Internet','Um tipo de cabo','Uma rede LAN'],1],
+ ['CRM significa:',['Customer Revenue Model','Customer Relationship Management','Computer Routing Method','Client Router Management'],1],
+ ['QBR serve para:',['Configurar Wi-Fi','Rever resultados, objetivos, riscos e próximos passos','Criar IPs','Apagar oportunidades'],1],
+ ['Cross-sell é:',['Adicionar uma oferta complementar','Sempre trocar por uma oferta mais cara','Cancelar um contrato','Reduzir clientes'],0],
+ ['SLA define:',['Níveis de serviço acordados','Cores do CRM','Endereço IP','Nome do cliente'],0],
+ ['Churn representa:',['Aquisição','Perda de clientes ou receita, conforme a métrica','Uma topologia','Um protocolo'],1],
+ ['No TCP/IP, transporte é:',['Aplicação','Transporte','Internet','Acesso à rede'],1]
+];
+function v2Extras(){
+ return `<div class="v2section" id="v2-exercises"><div class="v2title">📝 EXERCÍCIOS</div><div id="exercisePanel" class="v2panel"></div></div>
+ <div class="v2section" id="v2-progress"><div class="v2title">🎯 MEU PROGRESSO</div><div id="progressPanel" class="v2panel"></div></div>
+ <div class="v2section"><div class="v2title">🏆 CONQUISTAS</div><div id="achPanel" class="v2panel"></div></div>
+ <div class="v2section"><div class="v2title">🎓 CERTIFICADO</div><div id="certPanel" class="v2panel"></div></div>
+ <div class="v2section"><div class="v2title">⚙️ CONFIGURAÇÕES</div><div class="v2panel"><button class="complete danger" id="resetV2">↻ Reiniciar todo o progresso</button></div></div>`;
+}
+function renderV2Extras(){
+ const ep=$('#exercisePanel'); if(ep){
+   ep.innerHTML=V2Q.map((q,i)=>{
+    const a=state.answers[i]; return `<div class="exq"><b>${i+1}. ${q[0]}</b>${q[1].map((o,j)=>`<button class="opt ${a!==undefined?(j===q[2]?'ok':a===j?'no':''):''}" data-answer="${i}:${j}" ${a!==undefined?'disabled':''}>${String.fromCharCode(65+j)}) ${o}</button>`).join('')}${a!==undefined?`<p class="msg">${a===q[2]?'✓ Correto. +25 XP':'✕ Incorreto. Resposta: '+q[1][q[2]]}</p>`:''}</div>`;
+   }).join('');
+ }
+ const pp=$('#progressPanel');if(pp)pp.innerHTML=`<div class="v2grid">
+   <div class="v2stat"><small>🌐 Redes</small><b>${state.done.redes.length}/15</b></div>
+   <div class="v2stat"><small>💼 Gestão</small><b>${state.done.gestao.length}/18</b></div>
+   <div class="v2stat"><small>⚡ XP</small><b>${state.xp}</b></div>
+   <div class="v2stat"><small>🏅 Nível</small><b>${level()}</b></div>
+ </div><p class="msg">${completedTotal()} de ${totalLessons()} aulas concluídas · ${percent()}%</p>`;
+ const n=completedTotal(), qn=Object.keys(state.answers).length;
+ const ach=[['🌱','Primeiro passo','1 aula',n>=1],['📚','Estudante','5 aulas',n>=5],['⚡','Constante','10 aulas',n>=10],['🌐','Mestre das Redes','15 Redes',state.done.redes.length>=15],['💼','Gestor Júnior','18 Gestão',state.done.gestao.length>=18],['📝','Praticante','8 exercícios',qn>=8],['💎','1000 XP','1000 XP',state.xp>=1000],['🏆','Curso completo','33 aulas',n>=33]];
+ const ap=$('#achPanel');if(ap)ap.innerHTML=`<div class="achgrid">${ach.map(x=>`<div class="ach ${x[3]?'on':''}"><i>${x[0]}</i><b>${x[1]}</b><small>${x[2]}</small></div>`).join('')}</div>`;
+ const cp=$('#certPanel');if(cp)cp.innerHTML=n>=33?`<div class="certbox"><div class="kick">CERTIFICADO DE CONCLUSÃO</div><h3>GUIA DE ESTUDO</h3><p>Fundamentos de Redes + Gestor de Contas Júnior</p><p class="msg">${new Date().toLocaleDateString('pt-PT')}</p><button class="complete" data-print>🖨️ Imprimir / Guardar</button></div>`:`<div class="certbox"><h3>Certificado bloqueado</h3><p class="msg">Conclui as 33 aulas para desbloquear.</p><b>${n}/33</b></div>`;
+}
+function completeLesson(n){
+ const a=state.done[state.area],i=a.indexOf(n);
+ if(i<0){a.push(n);state.xp+=100}else{a.splice(i,1);state.xp=Math.max(0,state.xp-100)}
+ const y=window.scrollY,abertos=[...document.querySelectorAll('.card.open')].map(c=>c.id);
+ persist();renderApp();
+ abertos.forEach(id=>{const c=document.getElementById(id);if(c)setOpen(c,true)});
+ window.scrollTo({top:y,behavior:'instant'});
+}
+function answerV2(i,j){
+ if(state.answers[i]!==undefined)return;
+ state.answers[i]=j;if(j===V2Q[i][2])state.xp+=25;
+ persist();renderApp();
+ setTimeout(()=>document.getElementById('v2-exercises')?.scrollIntoView({behavior:'smooth',block:'start'}),50);
+}
+function resetV2(){
+ if(confirm('Apagar todo o progresso, XP e respostas?')){
+  localStorage.removeItem('guia_estudo_v2');
+  state.area='redes';state.all=false;state.xp=0;state.done={redes:[],gestao:[]};state.answers={};
+  renderApp();
+ }
+}
 function enhance(){
   document.querySelectorAll('.card').forEach(c=>{
     let n=0;
@@ -383,12 +496,17 @@ function toggleAll(){
   document.querySelectorAll('.card').forEach(c=>setOpen(c,state.all));
   $('#all').textContent=state.all?'Ocultar todas as explicações':'Mostrar todas as explicações';
 }
-function switchSection(k){if(k!==state.area){state.area=k;renderApp()}}
+function switchSection(k){if(k!==state.area){state.area=k;persist();renderApp()}}
 
 /* ========== 6. EVENTOS / RESPONSIVIDADE ========== */
 document.querySelector('.seg').addEventListener('click',e=>{const b=e.target.closest('button');b&&switchSection(b.dataset.k)});
 tabs.addEventListener('click',e=>{const p=e.target.closest('.pill');p&&scrollToLesson(p.dataset.target)});
 app.addEventListener('click',e=>{
+  const c=e.target.closest('[data-complete]');if(c)return completeLesson(Number(c.dataset.complete));
+  const a=e.target.closest('[data-answer]');if(a){const [i,j]=a.dataset.answer.split(':').map(Number);return answerV2(i,j)}
+  const j=e.target.closest('[data-jump]');if(j){document.getElementById(j.dataset.jump)?.scrollIntoView({behavior:'smooth',block:'start'});return}
+  if(e.target.id==='resetV2'){resetV2();return}
+  if(e.target.closest('[data-print]')){window.print();return}
   const it=e.target.closest('[data-t]');if(it)return pickItem(it);
   const x=e.target.closest('.ex');if(x)return toggleExplanation(x.closest('.card'));
   if(e.target.id==='all')toggleAll();
