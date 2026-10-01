@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Guia de Estudo</title>
+<title>Guia de Estudo · V12</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#07090f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -73,6 +73,30 @@ td:nth-child(2){color:var(--t)}
 .tpi{margin-top:10px;padding:12px 14px;border:1px solid rgba(var(--rgb),.4);border-radius:10px;background:rgba(var(--rgb),.06)}
 .tpi b{display:block;color:var(--a);font:.72rem "Space Mono",monospace;letter-spacing:1px;margin-bottom:6px;overflow-wrap:anywhere}
 .tpi p{font-size:.85rem;color:#c3ccdb;line-height:1.6}
+
+/* ===== V12 · SETOR DE IMAGENS ===== */
+.v12{margin-top:28px}
+.v12-head{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:14px}
+.v12-kick{font:.65rem "Space Mono";letter-spacing:1.7px;color:var(--a)}
+.v12-title{margin:4px 0;font-size:1.2rem}
+.v12-sub{color:var(--m);font-size:.82rem;line-height:1.55}
+.v12-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.v12-image-card{overflow:hidden;border:1px solid var(--b);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));border-radius:16px;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}
+.v12-image-card:hover{transform:translateY(-2px);border-color:var(--a);box-shadow:0 10px 28px rgba(0,0,0,.28)}
+.v12-photo{width:100%;height:170px;display:block;object-fit:cover;background:var(--s2)}
+.v12-body{padding:12px}
+.v12-cat{font:.6rem "Space Mono";letter-spacing:1.3px;color:var(--a);text-transform:uppercase}
+.v12-image-card h3{font-size:.9rem;margin:5px 0 3px}
+.v12-image-card p{font-size:.72rem;color:var(--m);line-height:1.45}
+.v12-modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.88);backdrop-filter:blur(8px)}
+.v12-modal.open{display:flex}
+.v12-modal-box{width:min(920px,100%);max-height:92vh;position:relative;border:1px solid rgba(var(--rgb),.45);border-radius:18px;background:var(--s);padding:10px;box-shadow:0 20px 70px rgba(0,0,0,.55)}
+.v12-modal-img{width:100%;max-height:78vh;object-fit:contain;border-radius:12px;display:block;background:#050505}
+.v12-modal-caption{padding:9px 4px 2px;text-align:center;color:var(--t);font-size:.8rem}
+.v12-close{position:absolute;right:16px;top:16px;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.7);color:#fff;font-size:1.1rem;cursor:pointer;z-index:2}
+.v12-note{margin-top:12px;padding:11px 12px;border-left:3px solid var(--a);border-radius:0 10px 10px 0;background:rgba(var(--rgb),.05);color:var(--m);font-size:.72rem;line-height:1.5}
+@media(max-width:520px){.v12-grid{grid-template-columns:1fr}.v12-photo{height:190px}.v12-head{align-items:flex-start;flex-direction:column}}
+
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* ===== V2 INTEGRADA — mantém o design original ===== */
@@ -131,6 +155,18 @@ td:nth-child(2){color:var(--t)}
 @media(max-width:430px){.v11-head{align-items:start;flex-direction:column}.v11-score{white-space:normal}}
 
 </style>
+
+<!-- V12_ONLINE_IMAGES -->
+<script>
+/*
+ V12: imagens carregadas diretamente da Internet.
+ Não é necessária a criação de uma pasta images/.
+*/
+window.V12_IMAGE_MODE = "online";
+window.V12_IMAGE_FALLBACK =
+  "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80";
+</script>
+
 </head>
 <body data-theme="cyan">
 <header>
@@ -397,6 +433,34 @@ function v11Answer(i,j){
 }
 function v11Reset(){state.v11[state.area]={score:0,done:[]};persist();keepScroll(renderApp)}
 
+const V12_IMAGES={
+ redes:[
+  {t:'Sem Internet',cat:'Diagnóstico de Redes',u:'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=85',d:'Infraestrutura e equipamentos numa situação de diagnóstico.'},
+  {t:'Site não abre',cat:'DNS / Web',u:'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=85',d:'Computador preparado para testar conectividade e resolução de nomes.'},
+  {t:'IP 169.254.x.x',cat:'DHCP / IPv4',u:'https://images.unsplash.com/photo-1551808525-51a94da548ce?auto=format&fit=crop&w=1200&q=85',d:'Estação de trabalho usada para análise de configuração de rede.'},
+  {t:'Um PC sem rede',cat:'LAN / Switch',u:'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?auto=format&fit=crop&w=1200&q=85',d:'Posto de trabalho e periféricos num ambiente de escritório.'},
+  {t:'Rede lenta',cat:'Desempenho',u:'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=85',d:'Ambiente colaborativo para investigar desempenho e utilização.'},
+  {t:'Gateway responde',cat:'Roteamento / ISP',u:'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=85',d:'Equipamento de infraestrutura associado à saída da rede.'}
+ ],
+ gestao:[
+  {t:'Cliente furioso',cat:'Atendimento',u:'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=85',d:'Reunião profissional para ouvir, compreender e alinhar uma solução.'},
+  {t:'Conta em risco',cat:'Retenção',u:'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=85',d:'Ambiente de trabalho para análise de contas e acompanhamento.'},
+  {t:'Oportunidade de expansão',cat:'Upsell / Cross-sell',u:'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1200&q=85',d:'Equipa a discutir necessidades e oportunidades de negócio.'},
+  {t:'SLA em risco',cat:'SLA / Operações',u:'https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=85',d:'Coordenação interna para acompanhar prazos e responsabilidades.'},
+  {t:'QBR',cat:'Business Review',u:'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1200&q=85',d:'Reunião de resultados, métricas, riscos e próximos passos.'},
+  {t:'CRM',cat:'Gestão de Conta',u:'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=85',d:'Equipa a trabalhar com informação de clientes e processos.'}
+ ]
+};
+function v12HTML(){
+ const a=state.area,items=V12_IMAGES[a],label=a==='redes'?'🌐 Redes':'💼 Gestão de Contas';
+ return `<section class="v12 card" id="v12" data-tab="v12"><div class="v12-head"><div><div class="v12-kick">V12 · SETOR DE IMAGENS</div><h2 class="v12-title">Biblioteca visual · ${label}</h2><p class="v12-sub">Imagens de referência para associar cada situação prática a um contexto visual. Toca numa imagem para ampliar.</p></div><div class="v11-score">${items.length} imagens</div></div><div class="v12-grid">${items.map((x,i)=>`<article class="v12-image-card" tabindex="0" data-v12img="${i}"><img class="v12-photo" src="${x.u}" alt="${x.t}" loading="lazy" referrerpolicy="no-referrer"><div class="v12-body"><div class="v12-cat">${x.cat}</div><h3>${i+1}. ${x.t}</h3><p>${x.d}</p></div></article>`).join('')}</div><div class="v12-note">As imagens são carregadas online na primeira utilização e podem ficar disponíveis no cache do PWA depois disso.</div><div class="v12-modal" id="v12-modal" aria-hidden="true"><div class="v12-modal-box"><button class="v12-close" type="button" aria-label="Fechar imagem">×</button><img class="v12-modal-img" id="v12-modal-img" alt=""><div class="v12-modal-caption" id="v12-modal-caption"></div></div></div></section>`;
+}
+function v12Open(i){
+ const x=V12_IMAGES[state.area][i],m=document.getElementById('v12-modal');if(!x||!m)return;
+ const im=document.getElementById('v12-modal-img');im.src=x.u;im.alt=x.t;document.getElementById('v12-modal-caption').textContent=x.t+' · '+x.cat;m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+}
+function v12Close(){const m=document.getElementById('v12-modal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true');document.body.style.overflow='';}
+
 function renderLessons(d){
   const aDone=state.done[state.area].length,aTot=d.lessons.length,aPct=Math.round(aDone/aTot*100);
   let h=`<div class="studybar">
@@ -414,6 +478,7 @@ function renderLessons(d){
   h+=levelsHTML(d);
   h+=finCardHTML(d);
   h+=v11HTML();
+  h+=v12HTML();
   if(d.siglas){
     h+=`<div class="sec">📚 SIGLAS</div><section class="card" id="siglas" data-tab="siglas"><div class="ch"><span class="num">★</span><h2>Siglas principais</h2></div>${tableHTML(['Sigla','Significado','Explicação'],d.siglas)}</section>`;
     h+=`<div class="sec">📖 TERMOS</div><section class="card" id="termos" data-tab="termos"><div class="ch"><span class="num">★</span><h2>Glossário</h2></div><input id="q" type="search" placeholder="🔎 Pesquisar termo..." aria-label="Pesquisar termo"><div id="g"></div></section>`;
@@ -705,7 +770,7 @@ function renderTabs(d){
     if(k<u){d.lessons.slice(k*LVN,k*LVN+LVN).forEach((l,i)=>{const n=k*LVN+i+1;items.push(['lesson-'+pad(n),lvVisible(a,n)?pad(n)+' '+l.tab:'🔒 '+pad(n)])});items.push(['teste-'+(k+1),(lvAllDone(a,k)?'🧪 ':'🔒 ')+'Teste '+(k+1)])}
     else items.push(['nivel-'+(k+1),'🔒 Nível '+(k+1)]);
   }
-  items.push(['v11','🎯 Treino V11'],['avaliacao','🎓 Avaliação']);
+  items.push(['v11','🎯 Treino V11'],['v12','🖼️ Imagens V12'],['avaliacao','🎓 Avaliação']);
   if(d.siglas)items.push(['siglas','Siglas'],['termos','Termos']);
   items.push(['resumo','Resumo']);
   tabs.innerHTML=items.map(([id,t])=>`<button class="pill" data-target="${id}">${t}</button>`).join('');
@@ -781,6 +846,9 @@ app.addEventListener('click',e=>{
     panel.classList.toggle('open',!open);
     return;
   }
+  const vi=e.target.closest('[data-v12img]');if(vi)return v12Open(+vi.dataset.v12img);
+  if(e.target.closest('.v12-close'))return v12Close();
+  if(e.target.id==='v12-modal')return v12Close();
   const v=e.target.closest('[data-v11]');if(v){const [i,j]=v.dataset.v11.split(':').map(Number);return v11Answer(i,j)}
   if(e.target.closest('[data-v11reset]'))return v11Reset();
   const c=e.target.closest('[data-complete]');if(c)return completeLesson(Number(c.dataset.complete));
@@ -804,7 +872,7 @@ app.addEventListener('click',e=>{
   const x=e.target.closest('.ex');if(x)return toggleExplanation(x.closest('.card'));
   if(e.target.id==='all')toggleAll();
 });
-app.addEventListener('keydown',e=>{const it=e.target.closest&&e.target.closest('[data-t]');if(it&&(e.key==='Enter'||e.key===' ')){e.preventDefault();pickItem(it)}});
+app.addEventListener('keydown',e=>{const vi=e.target.closest&&e.target.closest('[data-v12img]');if(vi&&(e.key==='Enter'||e.key===' ')){e.preventDefault();v12Open(+vi.dataset.v12img);return}const it=e.target.closest&&e.target.closest('[data-t]');if(it&&(e.key==='Enter'||e.key===' ')){e.preventDefault();pickItem(it)}});
 app.addEventListener('input',e=>{if(e.target.id==='q')filterGlossary(e);if(e.target.dataset&&e.target.dataset.w)return wInput(e.target);
   if(e.target.id&&e.target.id.startsWith('ta-')){const k=+e.target.id.slice(3),t=lt(state.area,k);t.open=e.target.value;persist();const b=document.querySelector('[data-ltsubmit="'+k+'"]');if(b)b.disabled=!ltReady(state.area,k)}});
 /* ===== RESPOSTAS ESCRITAS (sobrepõem as versões de escolha múltipla) ===== */
@@ -885,7 +953,7 @@ function finSubmit(){
  persist();keepScroll(renderApp);
 }
 function finRetry(){const f=state.final[state.area];f.att++;f.w={};f.done=false;f.score=0;f.pass=false;persist();keepScroll(renderApp)}
-window.addEventListener('resize',updateBar);
+window.addEventListener('resize',updateBar);window.addEventListener('keydown',e=>{if(e.key==='Escape')v12Close()});
 renderApp();
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>

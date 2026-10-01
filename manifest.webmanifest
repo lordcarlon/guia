@@ -1,26 +1,26 @@
 {
- "name": "Guia de Estudo",
- "short_name": "Guia",
- "description": "Redes e Gestão de Contas",
- "start_url": "./index.html",
- "scope": "./",
- "display": "standalone",
- "orientation": "portrait",
- "background_color": "#07090f",
- "theme_color": "#07090f",
- "lang": "pt",
- "icons": [
-  {
-   "src": "icon-192.png",
-   "sizes": "192x192",
-   "type": "image/png",
-   "purpose": "any maskable"
-  },
-  {
-   "src": "icon-512.png",
-   "sizes": "512x512",
-   "type": "image/png",
-   "purpose": "any maskable"
-  }
- ]
+  "name": "Guia de Estudo — V12",
+  "short_name": "Guia V12",
+  "description": "Redes, Gestão de Contas e Biblioteca Visual",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07090f",
+  "theme_color": "#07090f",
+  "lang": "pt",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
