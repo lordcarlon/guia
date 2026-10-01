@@ -100,9 +100,6 @@ td:nth-child(2){color:var(--t)}
 .ach{padding:13px;text-align:center;border:1px solid var(--b);background:var(--s2);border-radius:12px;opacity:.42}
 .ach.on{opacity:1;border-color:rgba(var(--rgb),.5)}
 .ach i{display:block;font-style:normal;font-size:1.3rem}.ach b{display:block;font-size:.75rem;margin-top:4px}.ach small{display:block;color:var(--m);font-size:.62rem;margin-top:3px}
-.ans{width:100%;padding:12px;border-radius:10px;border:1px solid var(--b);background:var(--s2);color:var(--t);font:inherit;font-size:.9rem;margin:8px 0}
-.opt.sel{border-color:var(--a)!important;background:rgba(var(--rgb),.18)!important}
-.complete[disabled]{opacity:.45}
 .certbox{text-align:center;padding:22px;border:1px solid rgba(var(--rgb),.45);border-radius:14px;background:rgba(var(--rgb),.05)}
 .certbox h3{color:var(--a);font-family:"Space Mono";letter-spacing:1px;margin:5px 0}
 .danger{color:#fca5a5!important;border-color:rgba(239,68,68,.4)!important}
@@ -305,7 +302,7 @@ const norm=s=>s.replace(/^[^\p{L}\p{N}]+/u,'').split(':')[0].trim().toLowerCase(
 /* ========== 2. ESTADO ========== */
 const savedV2=JSON.parse(localStorage.getItem('guia_estudo_v2')||'null');
 const state=Object.assign({area:'redes',all:false,xp:0,done:{redes:[],gestao:[]},answers:{},started:Date.now()},savedV2||{});
-state.done=state.done||{redes:[],gestao:[]};state.answers=state.answers||{};state.xp=state.xp||0;state.ok=state.ok||[];state.wrong=state.wrong||[];state.nAns=state.nAns||0;state.round=state.round||0;state.revTry={};state.final=state.final||freshFinal();state.unl=state.unl||{redes:1,gestao:1};state.lt=state.lt||{redes:{},gestao:{}};
+state.done=state.done||{redes:[],gestao:[]};state.answers=state.answers||{};state.xp=state.xp||0;state.ok=state.ok||[];state.wrong=state.wrong||[];state.nAns=state.nAns||0;state.round=state.round||0;state.revTry={};
 const persist=()=>localStorage.setItem('guia_estudo_v2',JSON.stringify(state));
 const lessonCount=()=>studyData[state.area].lessons.length;
 const totalLessons=()=>studyData.redes.lessons.length+studyData.gestao.lessons.length;
@@ -349,12 +346,10 @@ function renderLessons(d){
       <button id="all">Mostrar todas as explicações</button>
       <button class="jump" data-jump="v2-exercises">📝 Exercícios</button>
       <button class="jump" data-jump="v2-review">🔁 Erros</button>
-      <button class="jump" data-jump="avaliacao">🎓 Avaliação</button>
       <button class="jump" data-jump="v2-progress">🎯 Progresso</button>
     </div>
   </div>`;
-  h+=levelsHTML(d);
-  h+=finCardHTML(d);
+  h+=d.lessons.map((l,i)=>cardHTML('lesson-'+String(i+1).padStart(2,'0'),String(i+1).padStart(2,'0'),l.title,l.diagram,l.exp)).join('');
   if(d.siglas){
     h+=`<div class="sec">📚 SIGLAS</div><section class="card" id="siglas" data-tab="siglas"><div class="ch"><span class="num">★</span><h2>Siglas principais</h2></div>${tableHTML(['Sigla','Significado','Explicação'],d.siglas)}</section>`;
     h+=`<div class="sec">📖 TERMOS</div><section class="card" id="termos" data-tab="termos"><div class="ch"><span class="num">★</span><h2>Glossário</h2></div><input id="q" type="search" placeholder="🔎 Pesquisar termo..." aria-label="Pesquisar termo"><div id="g"></div></section>`;
@@ -423,94 +418,6 @@ function keepScroll(fn){
  abertos.forEach(id=>{const c=document.getElementById(id);if(c)setOpen(c,true)});
  window.scrollTo({top:y,behavior:'instant'});
 }
-function freshFinal(){const f=()=>({att:0,ans:{},done:false,score:0,best:0,pass:false,paid:false});return{redes:f(),gestao:f()}}
-function finSet(a){
- const f=state.final[a],r=rng('final-'+a+':'+f.att),ar=a==='redes'?'r':'g';
- return BANK.map((_,i)=>i).filter(i=>BANK[i][0]===ar).map(x=>[r(),x]).sort((p,q)=>p[0]-q[0]).slice(0,10).map(p=>p[1]);
-}
-function finHTML(){
- const a=state.area,f=state.final[a],ids=finSet(a),n=Object.keys(f.ans).length;
- const qs=ids.map((id,k)=>{const q=BANK[id];return `<div class="exq"><b>${k+1}. ${q[1]}</b>${q[2].map((o,j)=>{
-  let c='';if(f.done)c=j===q[3]?'ok':f.ans[id]===j?'no':'';else if(f.ans[id]===j)c='sel';
-  return `<button class="opt ${c}" data-fin="${id}:${j}" ${f.done?'disabled':''}>${String.fromCharCode(65+j)}) ${o}</button>`}).join('')}</div>`}).join('');
- const fim=f.done?`<div class="certbox"><h3>${f.score}/10 · ${f.pass?'✅ APROVADO':'❌ AINDA NÃO'}</h3><p class="msg">${f.pass?'Parabéns! A primeira aprovação dá +200 XP.':'Precisas de 7 certas. Revê os erros e tenta outra vez.'}</p></div><button class="complete" data-finretry="1">🔄 Tentar de novo (perguntas novas)</button>`
-  :`<p class="msg">${n}/10 respondidas</p><button class="complete" data-finsubmit="1" ${n<10?'disabled':''}>🎓 Concluir avaliação</button>`;
- return `<p class="msg" style="margin:0 0 10px">10 perguntas · aprovação com 7 certas${f.best?' · melhor resultado: '+f.best+'/10':''}</p>`+qs+fim;
-}
-function finAnswer(id,j){const f=state.final[state.area];if(f.done)return;f.ans[id]=j;persist();keepScroll(renderApp)}
-function finSubmit(){
- const a=state.area,f=state.final[a],ids=finSet(a);if(Object.keys(f.ans).length<10)return;
- let s=0;ids.forEach(id=>{if(f.ans[id]===BANK[id][3]){s++;state.wrong=state.wrong.filter(x=>x!==id)}else if(!state.wrong.includes(id))state.wrong.push(id)});
- f.done=true;f.score=s;f.best=Math.max(f.best||0,s);f.pass=s>=7;
- if(f.pass&&!f.paid){f.paid=true;state.xp+=200}
- persist();keepScroll(renderApp);
-}
-function finRetry(){const f=state.final[state.area];f.att++;f.ans={};f.done=false;f.score=0;f.pass=false;persist();keepScroll(renderApp)}
-const LVN=5,pad=n=>String(n).padStart(2,'0'),lvCount=a=>Math.ceil(studyData[a].lessons.length/LVN);
-const LESS=[9,13,15,9,5,10,10,6,10,12,14,8,9,4,3,10,11,14,7,10,11,8,7,15,9,7,2,9,9,6,13,13,4,10,9,18,11,9,15,3];
-const OPENQ={
-redes:[
-['Explica o que é uma rede e dá uma vantagem e um risco.','Uma rede é um conjunto de dispositivos ligados que trocam dados e partilham recursos. Vantagem: partilha de recursos e comunicação. Risco: ataques, malware ou dependência da rede.',['dispositivos','partilh','vantagem','ataque|malware|segurança|risco']],
-['Explica como um pedido vai de um cliente até um servidor.','O cliente faz um pedido, o router encaminha-o pela rede e pela Internet até ao servidor, que devolve uma resposta. Protocolos como HTTP e TCP/IP definem as regras e o DNS traduz o nome do site em IP.',['cliente','pedido','servidor','resposta','protocolo','dns']],
-['Diferencia Internet e Web e explica para que serve o IP.','A Internet é a infraestrutura global de redes; a Web é um dos serviços que a usa (sites no navegador). O IP é o endereço de cada dispositivo, para o identificar e localizar. O TCP garante a entrega completa e ordenada.',['infraestrutura','web|sites','endereço','ip','tcp']]
-],
-gestao:[
-['Explica a diferença entre Gestor de Contas e Vendas.','Vendas conquista novos clientes (aquisição). O Gestor de Contas acompanha quem já comprou, mantém a relação, retém e expande a conta. São funções complementares.',['novos','aquisi','retenç|reter|manter','expans|crescer','complementar']],
-['Como lidas com um cliente insatisfeito?','Ouvir sem interromper, entender a causa, validar a preocupação, apresentar uma solução com prazos reais e acompanhar até estar resolvido.',['ouvir|escutar','causa','solução','prazo','acompanh']],
-['Para que serve o CRM e o que é um SLA?','O CRM regista clientes, contactos, histórico, oportunidades e tarefas. O SLA é o acordo de nível de serviço: tempos de resposta, resolução e disponibilidade.',['regist','histórico','oportunidades','acordo','tempo|prazo']],
-['Como medes o sucesso e a retenção dos clientes?','Pela receita, retenção (menos churn), satisfação (NPS/CSAT), adoção e expansão das contas. A retenção resulta de valor, relacionamento e acompanhamento.',['receita','churn|retenç','satisfa','expans','valor']]
-]};
-const nrm=t=>(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-const esc=t=>(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const lt=(a,k)=>state.lt[a][k]||(state.lt[a][k]={ans:{},open:'',done:false,score:0,pass:false,att:0,paid:false});
-function lvSet(a,k){
- const t=lt(a,k),r=rng('lv-'+a+k+':'+t.att),lo=k*LVN+1,hi=lo+LVN-1,ar=a==='redes'?'r':'g',mine=[],rest=[];
- BANK.forEach((q,i)=>{if(q[0]===ar)(LESS[i]>=lo&&LESS[i]<=hi?mine:rest).push(i)});
- const sh=x=>x.map(v=>[r(),v]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
- return [...sh(mine),...sh(rest)].slice(0,5);
-}
-function claudePrompt(a,k){const t=lt(a,k),o=OPENQ[a][k];return `Corrige a minha resposta (estudo para entrevista de Gestor de Contas Júnior / Redes).\nPergunta: ${o[0]}\nA minha resposta: ${t.open}\nResposta modelo: ${o[1]}\nDiz o que está certo, o que falta e dá uma nota de 0 a 10.`}
-function testHTML(a,k){
- const t=lt(a,k),ids=lvSet(a,k),n=Object.keys(t.ans).length,o=OPENQ[a][k],txt=nrm(t.open),last=k===lvCount(a)-1,len=(t.open||'').trim().length;
- const qs=ids.map((id,i)=>{const q=BANK[id];return `<div class="exq"><b>${i+1}. ${q[1]}</b>${q[2].map((x,j)=>{let c='';if(t.done)c=j===q[3]?'ok':t.ans[id]===j?'no':'';else if(t.ans[id]===j)c='sel';
-  return `<button class="opt ${c}" data-lt="${k}:${id}:${j}" ${t.done?'disabled':''}>${String.fromCharCode(65+j)}) ${x}</button>`}).join('')}</div>`}).join('');
- let fb='';
- if(t.done){const ks=o[2].map(w=>[w.split('|')[0],w.split('|').some(x=>txt.includes(nrm(x)))]);
-  fb=`<p class="msg"><b>Resposta modelo:</b> ${o[1]}</p><div class="tags">${ks.map(([w,ok])=>`<span class="tag ${ok?'g':'red'}">${ok?'✓':'✕'} ${w}</span>`).join('')}</div><button class="complete" data-copy="${a}:${k}">🤖 Corrigir com Claude (copiar)</button><a class="complete" style="display:block;text-align:center;text-decoration:none" href="https://claude.ai" target="_blank" rel="noopener">Abrir o Claude ↗</a>`}
- const open=`<div class="exq"><b>✍️ ${o[0]}</b><textarea class="ans" id="ta-${k}" rows="4" placeholder="Escreve a tua resposta (mín. 20 letras)..." ${t.done?'readonly':''}>${esc(t.open)}</textarea>${fb}</div>`;
- const fim=t.done?`<div class="certbox"><h3>${t.score}/5 · ${t.pass?'✅ NÍVEL SUPERADO':'❌ AINDA NÃO'}</h3><p class="msg">${t.pass?(last?'Último nível! A Avaliação final está aberta.':'🔓 Nível '+(k+2)+' desbloqueado.'):'Precisas de 3 certas e da resposta escrita. Revê e tenta de novo.'}</p></div>`+(t.pass?`<button class="complete" data-jump="${last?'avaliacao':'lesson-'+pad(k*LVN+LVN+1)}">➡️ ${last?'Ir para a Avaliação final':'Começar o Nível '+(k+2)}</button>`:'')+`<button class="complete" data-ltretry="${k}">🔄 Tentar de novo</button>`
-  :`<button class="complete" data-ltsubmit="${k}" ${n<5||len<20?'disabled':''}>🧪 Concluir teste</button>`;
- return `<p class="msg" style="margin:0 0 10px">5 perguntas + 1 resposta escrita · passas com 3 certas e a resposta escrita</p>`+qs+open+fim;
-}
-function levelsHTML(d){
- const a=state.area,L=d.lessons,u=state.unl[a];let h='';
- for(let k=0;k<lvCount(a);k++){
-  const lo=k*LVN,hi=Math.min(lo+LVN,L.length);
-  if(k<u){
-   h+=`<div class="sec">NÍVEL ${k+1} · TEMAS ${pad(lo+1)}–${pad(hi)}</div>`+L.slice(lo,hi).map((l,i)=>cardHTML('lesson-'+pad(lo+i+1),pad(lo+i+1),l.title,l.diagram,l.exp)).join('');
-   h+=`<section class="card" id="teste-${k+1}" data-tab="teste-${k+1}"><div class="ch"><span class="num">🧪</span><h2>Teste do Nível ${k+1}</h2></div><div class="dg">${testHTML(a,k)}</div></section>`;
-  }else h+=`<div class="sec">NÍVEL ${k+1} · TEMAS ${pad(lo+1)}–${pad(hi)}</div><section class="card" id="nivel-${k+1}" data-tab="nivel-${k+1}"><div class="ch"><span class="num">🔒</span><h2>Nível ${k+1} bloqueado</h2></div><p class="msg">Passa no Teste do Nível ${k} para abrir estes temas.</p></section>`;
- }
- return h;
-}
-function finCardHTML(d){
- const a=state.area,all=Array.from({length:lvCount(a)},(_,k)=>lt(a,k).pass).every(Boolean);
- return `<div class="sec">🎓 AVALIAÇÃO FINAL</div><section class="card" id="avaliacao" data-tab="avaliacao"><div class="ch"><span class="num">${all?'🎓':'🔒'}</span><h2>Avaliação final · ${d.kicker}</h2></div>`+(all?'<div class="dg" id="finPanel"></div>':'<p class="msg">Passa em todos os testes de nível para abrir a avaliação final.</p>')+`</section>`;
-}
-function ltAnswer(k,id,j){const t=lt(state.area,k);if(t.done)return;t.ans[id]=j;persist();keepScroll(renderApp)}
-function ltSubmit(k){
- const a=state.area,t=lt(a,k),ids=lvSet(a,k);if(Object.keys(t.ans).length<5||t.open.trim().length<20)return;
- let s=0;ids.forEach(id=>{if(t.ans[id]===BANK[id][3]){s++;state.wrong=state.wrong.filter(x=>x!==id)}else if(!state.wrong.includes(id))state.wrong.push(id)});
- t.done=true;t.score=s;t.pass=s>=3;
- if(t.pass){state.unl[a]=Math.max(state.unl[a],Math.min(lvCount(a),k+2));if(!t.paid){t.paid=true;state.xp+=100}}
- persist();keepScroll(renderApp);
-}
-function ltRetry(k){const t=lt(state.area,k);t.att++;t.ans={};t.done=false;t.score=0;t.pass=false;persist();keepScroll(renderApp)}
-function copyPrompt(a,k){
- const t=claudePrompt(a,k),ok=()=>{const b=document.querySelector('[data-copy="'+a+':'+k+'"]');if(b)b.textContent='✓ Copiado! Cola no Claude'};
- const fb=()=>{const x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();try{document.execCommand('copy')}catch(e){}x.remove();ok()};
- if(navigator.clipboard)navigator.clipboard.writeText(t).then(ok).catch(fb);else fb();
-}
 function qHTML(id,n,a,rev){
  const q=BANK[id],tries=rev?(state.revTry[id]||[]):[];
  return `<div class="exq"><b>${n}. ${q[1]}</b>${q[2].map((o,j)=>{
@@ -529,7 +436,6 @@ function v2Extras(){
 }
 function renderV2Extras(){
  ensureSet();
- const fp=$('#finPanel');if(fp)fp.innerHTML=finHTML();
  const ep=$('#exercisePanel');if(ep){
    const feitas=state.set.filter(id=>state.answers[id]!==undefined).length;
    ep.innerHTML=`<p class="msg" style="margin:0 0 10px">Desafio ${state.week} · ${feitas}/${state.set.length} respondidas</p>`+state.set.map((id,k)=>qHTML(id,k+1,state.answers[id],false)).join('')+`<button class="complete" data-newset="1">🔄 Novo desafio</button>`;
@@ -542,7 +448,7 @@ function renderV2Extras(){
    <div class="v2stat"><small>🏅 Nível</small><b>${level()}</b></div>
  </div><p class="msg">${completedTotal()} de ${totalLessons()} aulas concluídas · ${percent()}%</p>`;
  const n=completedTotal(), qn=state.nAns;
- const ach=[['🌱','Primeiro passo','1 aula',n>=1],['📚','Estudante','5 aulas',n>=5],['⚡','Constante','10 aulas',n>=10],['🌐','Mestre das Redes','15 Redes',state.done.redes.length>=15],['💼','Gestor Júnior','18 Gestão',state.done.gestao.length>=18],['📝','Praticante','8 exercícios',qn>=8],['💎','1000 XP','1000 XP',state.xp>=1000],['🎓','Aprovado em Redes','Final Redes',state.final.redes.paid],['🎓','Aprovado em Gestão','Final Gestão',state.final.gestao.paid],['🏆','Curso completo','33 aulas',n>=33]];
+ const ach=[['🌱','Primeiro passo','1 aula',n>=1],['📚','Estudante','5 aulas',n>=5],['⚡','Constante','10 aulas',n>=10],['🌐','Mestre das Redes','15 Redes',state.done.redes.length>=15],['💼','Gestor Júnior','18 Gestão',state.done.gestao.length>=18],['📝','Praticante','8 exercícios',qn>=8],['💎','1000 XP','1000 XP',state.xp>=1000],['🏆','Curso completo','33 aulas',n>=33]];
  const ap=$('#achPanel');if(ap)ap.innerHTML=`<div class="achgrid">${ach.map(x=>`<div class="ach ${x[3]?'on':''}"><i>${x[0]}</i><b>${x[1]}</b><small>${x[2]}</small></div>`).join('')}</div>`;
  const cp=$('#certPanel');if(cp)cp.innerHTML=n>=33?`<div class="certbox"><div class="kick">CERTIFICADO DE CONCLUSÃO</div><h3>GUIA DE ESTUDO</h3><p>Fundamentos de Redes + Gestor de Contas Júnior</p><p class="msg">${new Date().toLocaleDateString('pt-PT')}</p><button class="complete" data-print>🖨️ Imprimir / Guardar</button></div>`:`<div class="certbox"><h3>Certificado bloqueado</h3><p class="msg">Conclui as 33 aulas para desbloquear.</p><b>${n}/33</b></div>`;
 }
@@ -574,7 +480,7 @@ function newSet(){keepScroll(()=>{ensureSet(true);renderApp()})}
 function resetV2(){
  if(confirm('Apagar todo o progresso, XP e respostas?')){
   localStorage.removeItem('guia_estudo_v2');
-  state.area='redes';state.all=false;state.xp=0;state.done={redes:[],gestao:[]};state.answers={};state.ok=[];state.wrong=[];state.nAns=0;state.set=null;state.week=null;state.round=0;state.revTry={};state.final=freshFinal();state.unl={redes:1,gestao:1};state.lt={redes:{},gestao:{}};
+  state.area='redes';state.all=false;state.xp=0;state.done={redes:[],gestao:[]};state.answers={};state.ok=[];state.wrong=[];state.nAns=0;state.set=null;state.week=null;state.round=0;state.revTry={};
   renderApp();
  }
 }
@@ -607,12 +513,7 @@ function renderGlossary(q){
 function filterGlossary(e){renderGlossary(e.target.value)}
 
 function renderTabs(d){
-  const a=state.area,u=state.unl[a],items=[];
-  for(let k=0;k<lvCount(a);k++){
-    if(k<u){d.lessons.slice(k*LVN,k*LVN+LVN).forEach((l,i)=>{const n=k*LVN+i+1;items.push(['lesson-'+pad(n),pad(n)+' '+l.tab])});items.push(['teste-'+(k+1),'🧪 Teste '+(k+1)])}
-    else items.push(['nivel-'+(k+1),'🔒 Nível '+(k+1)]);
-  }
-  items.push(['avaliacao','🎓 Avaliação']);
+  const items=d.lessons.map((l,i)=>['lesson-'+String(i+1).padStart(2,'0'),String(i+1).padStart(2,'0')+' '+l.tab]);
   if(d.siglas)items.push(['siglas','Siglas'],['termos','Termos']);
   items.push(['resumo','Resumo']);
   tabs.innerHTML=items.map(([id,t])=>`<button class="pill" data-target="${id}">${t}</button>`).join('');
@@ -673,13 +574,6 @@ app.addEventListener('click',e=>{
   const a=e.target.closest('[data-answer]');if(a){const [i,j]=a.dataset.answer.split(':').map(Number);return answerV2(i,j)}
   const rv=e.target.closest('[data-rev]');if(rv){const [i,j]=rv.dataset.rev.split(':').map(Number);return answerRev(i,j)}
   if(e.target.closest('[data-newset]'))return newSet();
-  const fn=e.target.closest('[data-fin]');if(fn){const [i,j]=fn.dataset.fin.split(':').map(Number);return finAnswer(i,j)}
-  if(e.target.closest('[data-finsubmit]'))return finSubmit();
-  if(e.target.closest('[data-finretry]'))return finRetry();
-  const lq=e.target.closest('[data-lt]');if(lq){const [k,i,j]=lq.dataset.lt.split(':').map(Number);return ltAnswer(k,i,j)}
-  const ls=e.target.closest('[data-ltsubmit]');if(ls)return ltSubmit(+ls.dataset.ltsubmit);
-  const lr=e.target.closest('[data-ltretry]');if(lr)return ltRetry(+lr.dataset.ltretry);
-  const cp=e.target.closest('[data-copy]');if(cp){const [a,k]=cp.dataset.copy.split(':');return copyPrompt(a,+k)}
   const j=e.target.closest('[data-jump]');if(j){document.getElementById(j.dataset.jump)?.scrollIntoView({behavior:'smooth',block:'start'});return}
   if(e.target.id==='resetV2'){resetV2();return}
   if(e.target.closest('[data-print]')){window.print();return}
@@ -688,8 +582,7 @@ app.addEventListener('click',e=>{
   if(e.target.id==='all')toggleAll();
 });
 app.addEventListener('keydown',e=>{const it=e.target.closest&&e.target.closest('[data-t]');if(it&&(e.key==='Enter'||e.key===' ')){e.preventDefault();pickItem(it)}});
-app.addEventListener('input',e=>{if(e.target.id==='q')filterGlossary(e);
-  if(e.target.id&&e.target.id.startsWith('ta-')){const k=+e.target.id.slice(3),t=lt(state.area,k);t.open=e.target.value;persist();const b=document.querySelector('[data-ltsubmit="'+k+'"]');if(b)b.disabled=Object.keys(t.ans).length<5||t.open.trim().length<20}});
+app.addEventListener('input',e=>{if(e.target.id==='q')filterGlossary(e)});
 window.addEventListener('resize',updateBar);
 renderApp();
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
