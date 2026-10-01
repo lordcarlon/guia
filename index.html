@@ -100,6 +100,8 @@ td:nth-child(2){color:var(--t)}
 .ach{padding:13px;text-align:center;border:1px solid var(--b);background:var(--s2);border-radius:12px;opacity:.42}
 .ach.on{opacity:1;border-color:rgba(var(--rgb),.5)}
 .ach i{display:block;font-style:normal;font-size:1.3rem}.ach b{display:block;font-size:.75rem;margin-top:4px}.ach small{display:block;color:var(--m);font-size:.62rem;margin-top:3px}
+.opt.sel{border-color:var(--a)!important;background:rgba(var(--rgb),.18)!important}
+.complete[disabled]{opacity:.45}
 .certbox{text-align:center;padding:22px;border:1px solid rgba(var(--rgb),.45);border-radius:14px;background:rgba(var(--rgb),.05)}
 .certbox h3{color:var(--a);font-family:"Space Mono";letter-spacing:1px;margin:5px 0}
 .danger{color:#fca5a5!important;border-color:rgba(239,68,68,.4)!important}
@@ -302,7 +304,7 @@ const norm=s=>s.replace(/^[^\p{L}\p{N}]+/u,'').split(':')[0].trim().toLowerCase(
 /* ========== 2. ESTADO ========== */
 const savedV2=JSON.parse(localStorage.getItem('guia_estudo_v2')||'null');
 const state=Object.assign({area:'redes',all:false,xp:0,done:{redes:[],gestao:[]},answers:{},started:Date.now()},savedV2||{});
-state.done=state.done||{redes:[],gestao:[]};state.answers=state.answers||{};state.xp=state.xp||0;state.ok=state.ok||[];state.wrong=state.wrong||[];state.nAns=state.nAns||0;state.round=state.round||0;state.revTry={};
+state.done=state.done||{redes:[],gestao:[]};state.answers=state.answers||{};state.xp=state.xp||0;state.ok=state.ok||[];state.wrong=state.wrong||[];state.nAns=state.nAns||0;state.round=state.round||0;state.revTry={};state.final=state.final||freshFinal();
 const persist=()=>localStorage.setItem('guia_estudo_v2',JSON.stringify(state));
 const lessonCount=()=>studyData[state.area].lessons.length;
 const totalLessons=()=>studyData.redes.lessons.length+studyData.gestao.lessons.length;
@@ -346,10 +348,12 @@ function renderLessons(d){
       <button id="all">Mostrar todas as explicações</button>
       <button class="jump" data-jump="v2-exercises">📝 Exercícios</button>
       <button class="jump" data-jump="v2-review">🔁 Erros</button>
+      <button class="jump" data-jump="avaliacao">🎓 Avaliação</button>
       <button class="jump" data-jump="v2-progress">🎯 Progresso</button>
     </div>
   </div>`;
   h+=d.lessons.map((l,i)=>cardHTML('lesson-'+String(i+1).padStart(2,'0'),String(i+1).padStart(2,'0'),l.title,l.diagram,l.exp)).join('');
+  h+=`<div class="sec">🎓 AVALIAÇÃO FINAL</div><section class="card" id="avaliacao" data-tab="avaliacao"><div class="ch"><span class="num">🎓</span><h2>Avaliação final · ${d.kicker}</h2></div><div class="dg" id="finPanel"></div></section>`;
   if(d.siglas){
     h+=`<div class="sec">📚 SIGLAS</div><section class="card" id="siglas" data-tab="siglas"><div class="ch"><span class="num">★</span><h2>Siglas principais</h2></div>${tableHTML(['Sigla','Significado','Explicação'],d.siglas)}</section>`;
     h+=`<div class="sec">📖 TERMOS</div><section class="card" id="termos" data-tab="termos"><div class="ch"><span class="num">★</span><h2>Glossário</h2></div><input id="q" type="search" placeholder="🔎 Pesquisar termo..." aria-label="Pesquisar termo"><div id="g"></div></section>`;
@@ -418,6 +422,29 @@ function keepScroll(fn){
  abertos.forEach(id=>{const c=document.getElementById(id);if(c)setOpen(c,true)});
  window.scrollTo({top:y,behavior:'instant'});
 }
+function freshFinal(){const f=()=>({att:0,ans:{},done:false,score:0,best:0,pass:false,paid:false});return{redes:f(),gestao:f()}}
+function finSet(a){
+ const f=state.final[a],r=rng('final-'+a+':'+f.att),ar=a==='redes'?'r':'g';
+ return BANK.map((_,i)=>i).filter(i=>BANK[i][0]===ar).map(x=>[r(),x]).sort((p,q)=>p[0]-q[0]).slice(0,10).map(p=>p[1]);
+}
+function finHTML(){
+ const a=state.area,f=state.final[a],ids=finSet(a),n=Object.keys(f.ans).length;
+ const qs=ids.map((id,k)=>{const q=BANK[id];return `<div class="exq"><b>${k+1}. ${q[1]}</b>${q[2].map((o,j)=>{
+  let c='';if(f.done)c=j===q[3]?'ok':f.ans[id]===j?'no':'';else if(f.ans[id]===j)c='sel';
+  return `<button class="opt ${c}" data-fin="${id}:${j}" ${f.done?'disabled':''}>${String.fromCharCode(65+j)}) ${o}</button>`}).join('')}</div>`}).join('');
+ const fim=f.done?`<div class="certbox"><h3>${f.score}/10 · ${f.pass?'✅ APROVADO':'❌ AINDA NÃO'}</h3><p class="msg">${f.pass?'Parabéns! A primeira aprovação dá +200 XP.':'Precisas de 7 certas. Revê os erros e tenta outra vez.'}</p></div><button class="complete" data-finretry="1">🔄 Tentar de novo (perguntas novas)</button>`
+  :`<p class="msg">${n}/10 respondidas</p><button class="complete" data-finsubmit="1" ${n<10?'disabled':''}>🎓 Concluir avaliação</button>`;
+ return `<p class="msg" style="margin:0 0 10px">10 perguntas · aprovação com 7 certas${f.best?' · melhor resultado: '+f.best+'/10':''}</p>`+qs+fim;
+}
+function finAnswer(id,j){const f=state.final[state.area];if(f.done)return;f.ans[id]=j;persist();keepScroll(renderApp)}
+function finSubmit(){
+ const a=state.area,f=state.final[a],ids=finSet(a);if(Object.keys(f.ans).length<10)return;
+ let s=0;ids.forEach(id=>{if(f.ans[id]===BANK[id][3]){s++;state.wrong=state.wrong.filter(x=>x!==id)}else if(!state.wrong.includes(id))state.wrong.push(id)});
+ f.done=true;f.score=s;f.best=Math.max(f.best||0,s);f.pass=s>=7;
+ if(f.pass&&!f.paid){f.paid=true;state.xp+=200}
+ persist();keepScroll(renderApp);
+}
+function finRetry(){const f=state.final[state.area];f.att++;f.ans={};f.done=false;f.score=0;f.pass=false;persist();keepScroll(renderApp)}
 function qHTML(id,n,a,rev){
  const q=BANK[id],tries=rev?(state.revTry[id]||[]):[];
  return `<div class="exq"><b>${n}. ${q[1]}</b>${q[2].map((o,j)=>{
@@ -436,6 +463,7 @@ function v2Extras(){
 }
 function renderV2Extras(){
  ensureSet();
+ const fp=$('#finPanel');if(fp)fp.innerHTML=finHTML();
  const ep=$('#exercisePanel');if(ep){
    const feitas=state.set.filter(id=>state.answers[id]!==undefined).length;
    ep.innerHTML=`<p class="msg" style="margin:0 0 10px">Desafio ${state.week} · ${feitas}/${state.set.length} respondidas</p>`+state.set.map((id,k)=>qHTML(id,k+1,state.answers[id],false)).join('')+`<button class="complete" data-newset="1">🔄 Novo desafio</button>`;
@@ -448,7 +476,7 @@ function renderV2Extras(){
    <div class="v2stat"><small>🏅 Nível</small><b>${level()}</b></div>
  </div><p class="msg">${completedTotal()} de ${totalLessons()} aulas concluídas · ${percent()}%</p>`;
  const n=completedTotal(), qn=state.nAns;
- const ach=[['🌱','Primeiro passo','1 aula',n>=1],['📚','Estudante','5 aulas',n>=5],['⚡','Constante','10 aulas',n>=10],['🌐','Mestre das Redes','15 Redes',state.done.redes.length>=15],['💼','Gestor Júnior','18 Gestão',state.done.gestao.length>=18],['📝','Praticante','8 exercícios',qn>=8],['💎','1000 XP','1000 XP',state.xp>=1000],['🏆','Curso completo','33 aulas',n>=33]];
+ const ach=[['🌱','Primeiro passo','1 aula',n>=1],['📚','Estudante','5 aulas',n>=5],['⚡','Constante','10 aulas',n>=10],['🌐','Mestre das Redes','15 Redes',state.done.redes.length>=15],['💼','Gestor Júnior','18 Gestão',state.done.gestao.length>=18],['📝','Praticante','8 exercícios',qn>=8],['💎','1000 XP','1000 XP',state.xp>=1000],['🎓','Aprovado em Redes','Final Redes',state.final.redes.paid],['🎓','Aprovado em Gestão','Final Gestão',state.final.gestao.paid],['🏆','Curso completo','33 aulas',n>=33]];
  const ap=$('#achPanel');if(ap)ap.innerHTML=`<div class="achgrid">${ach.map(x=>`<div class="ach ${x[3]?'on':''}"><i>${x[0]}</i><b>${x[1]}</b><small>${x[2]}</small></div>`).join('')}</div>`;
  const cp=$('#certPanel');if(cp)cp.innerHTML=n>=33?`<div class="certbox"><div class="kick">CERTIFICADO DE CONCLUSÃO</div><h3>GUIA DE ESTUDO</h3><p>Fundamentos de Redes + Gestor de Contas Júnior</p><p class="msg">${new Date().toLocaleDateString('pt-PT')}</p><button class="complete" data-print>🖨️ Imprimir / Guardar</button></div>`:`<div class="certbox"><h3>Certificado bloqueado</h3><p class="msg">Conclui as 33 aulas para desbloquear.</p><b>${n}/33</b></div>`;
 }
@@ -480,7 +508,7 @@ function newSet(){keepScroll(()=>{ensureSet(true);renderApp()})}
 function resetV2(){
  if(confirm('Apagar todo o progresso, XP e respostas?')){
   localStorage.removeItem('guia_estudo_v2');
-  state.area='redes';state.all=false;state.xp=0;state.done={redes:[],gestao:[]};state.answers={};state.ok=[];state.wrong=[];state.nAns=0;state.set=null;state.week=null;state.round=0;state.revTry={};
+  state.area='redes';state.all=false;state.xp=0;state.done={redes:[],gestao:[]};state.answers={};state.ok=[];state.wrong=[];state.nAns=0;state.set=null;state.week=null;state.round=0;state.revTry={};state.final=freshFinal();
   renderApp();
  }
 }
@@ -514,6 +542,7 @@ function filterGlossary(e){renderGlossary(e.target.value)}
 
 function renderTabs(d){
   const items=d.lessons.map((l,i)=>['lesson-'+String(i+1).padStart(2,'0'),String(i+1).padStart(2,'0')+' '+l.tab]);
+  items.push(['avaliacao','🎓 Avaliação']);
   if(d.siglas)items.push(['siglas','Siglas'],['termos','Termos']);
   items.push(['resumo','Resumo']);
   tabs.innerHTML=items.map(([id,t])=>`<button class="pill" data-target="${id}">${t}</button>`).join('');
@@ -574,6 +603,9 @@ app.addEventListener('click',e=>{
   const a=e.target.closest('[data-answer]');if(a){const [i,j]=a.dataset.answer.split(':').map(Number);return answerV2(i,j)}
   const rv=e.target.closest('[data-rev]');if(rv){const [i,j]=rv.dataset.rev.split(':').map(Number);return answerRev(i,j)}
   if(e.target.closest('[data-newset]'))return newSet();
+  const fn=e.target.closest('[data-fin]');if(fn){const [i,j]=fn.dataset.fin.split(':').map(Number);return finAnswer(i,j)}
+  if(e.target.closest('[data-finsubmit]'))return finSubmit();
+  if(e.target.closest('[data-finretry]'))return finRetry();
   const j=e.target.closest('[data-jump]');if(j){document.getElementById(j.dataset.jump)?.scrollIntoView({behavior:'smooth',block:'start'});return}
   if(e.target.id==='resetV2'){resetV2();return}
   if(e.target.closest('[data-print]')){window.print();return}
