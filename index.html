@@ -124,6 +124,12 @@ td:nth-child(2){color:var(--t)}
 .case-row.answer{border-left:3px solid var(--a);padding-left:11px}
 @media(max-width:430px){.case-actions{display:grid;grid-template-columns:1fr}.case-btn{min-width:0;width:100%}}
 
+
+/* ========== V11 · TREINO PRÁTICO ========== */
+.v11{margin:18px 0 28px}.v11-head{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:12px}.v11-kick{font:.65rem "Space Mono";letter-spacing:1.5px;color:var(--a)}.v11-title{margin:3px 0;font-size:1.2rem}.v11-score{font:.72rem "Space Mono";white-space:nowrap}.v11-grid{display:grid;gap:12px}.v11-card{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.015));border-radius:16px;padding:16px}.v11-card h3{margin:0 0 7px;font-size:1rem}.v11-card .scenario{color:#cbd3df;line-height:1.65;font-size:.86rem;margin-bottom:12px}.v11-opts{display:grid;gap:8px}.v11-opt{width:100%;text-align:left;border:1px solid var(--line);background:#0d1118;color:#e8edf5;border-radius:11px;padding:11px 12px;cursor:pointer;font:inherit;font-size:.82rem;line-height:1.45}.v11-opt:hover{border-color:var(--a)}.v11-opt.correct{border-color:#38d996;background:rgba(56,217,150,.08)}.v11-opt.wrong{border-color:#ff6674;background:rgba(255,102,116,.07)}.v11-feedback{display:none;margin-top:11px;padding:11px 12px;border-left:3px solid var(--a);background:rgba(255,255,255,.025);font-size:.82rem;line-height:1.6;color:#d7dee9}.v11-feedback.open{display:block}.v11-mini{font:.65rem "Space Mono";color:#8f9bab;margin-top:8px}.v11-reset{margin-top:12px}.v11-done{border-color:var(--a)}
+@media(min-width:720px){.v11-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:430px){.v11-head{align-items:start;flex-direction:column}.v11-score{white-space:normal}}
+
 </style>
 </head>
 <body data-theme="cyan">
@@ -323,7 +329,7 @@ const norm=s=>s.replace(/^[^\p{L}\p{N}]+/u,'').split(':')[0].trim().toLowerCase(
 /* ========== 2. ESTADO ========== */
 const savedV2=JSON.parse(localStorage.getItem('guia_estudo_v2')||'null');
 const state=Object.assign({area:'redes',all:false,xp:0,done:{redes:[],gestao:[]},answers:{},started:Date.now()},savedV2||{});
-state.done=state.done||{redes:[],gestao:[]};state.answers=state.answers||{};state.xp=state.xp||0;state.ok=state.ok||[];state.wrong=state.wrong||[];state.nAns=state.nAns||0;state.round=state.round||0;state.revTry={};state.final=state.final||freshFinal();state.unl=state.unl||{redes:1,gestao:1};state.lt=state.lt||{redes:{},gestao:{}};state.seen=state.seen||{redes:[],gestao:[]};state.exw=state.exw||{};state.rvw=state.rvw||{};
+state.done=state.done||{redes:[],gestao:[]};state.answers=state.answers||{};state.xp=state.xp||0;state.ok=state.ok||[];state.wrong=state.wrong||[];state.nAns=state.nAns||0;state.round=state.round||0;state.revTry={};state.final=state.final||freshFinal();state.unl=state.unl||{redes:1,gestao:1};state.lt=state.lt||{redes:{},gestao:{}};state.seen=state.seen||{redes:[],gestao:[]};state.exw=state.exw||{};state.rvw=state.rvw||{};state.v11=state.v11||{redes:{score:0,done:[]},gestao:{score:0,done:[]}};state.v11.redes=state.v11.redes||{score:0,done:[]};state.v11.gestao=state.v11.gestao||{score:0,done:[]};
 const persist=()=>localStorage.setItem('guia_estudo_v2',JSON.stringify(state));
 const lessonCount=()=>studyData[state.area].lessons.length;
 const totalLessons=()=>studyData.redes.lessons.length+studyData.gestao.lessons.length;
@@ -358,6 +364,39 @@ function renderApp(){
   updateBar();window.scrollTo(0,0);
 }
 
+const V11={
+ redes:[
+  {t:'Sem Internet',s:'Um computador está ligado ao Wi-Fi, mas não consegue abrir nenhum site. Outros computadores da mesma rede funcionam normalmente.',o:['Reiniciar imediatamente o router','Verificar primeiro ligação, IP/gateway e depois testar conectividade','Trocar o DNS sem verificar mais nada'],c:1,f:'Como o problema parece isolado a um equipamento, começa pelo básico: ligação física/Wi-Fi, configuração IP e gateway. Depois testa um IP externo e, só então, DNS. Esta ordem ajuda a localizar a camada do problema.'},
+  {t:'Site não abre, mas a Internet responde',s:'O utilizador consegue fazer ping a um endereço IP externo, mas não consegue abrir example.com pelo nome.',o:['Testar DNS/resolução de nomes','Trocar o switch','Substituir o cabo de rede'],c:0,f:'Se a conectividade por IP funciona mas o nome não resolve, o DNS é um suspeito forte. Testa a resolução do nome e confirma o servidor DNS configurado.'},
+  {t:'IP estranho',s:'Um PC aparece com um endereço 169.254.x.x e não consegue comunicar com os restantes equipamentos da rede.',o:['Verificar DHCP e a ligação à rede','Configurar um servidor Web','Alterar HTTP para HTTPS'],c:0,f:'Um endereço 169.254.x.x é normalmente uma indicação de que o equipamento não recebeu configuração IPv4 válida via DHCP. Verifica cabo/Wi-Fi, DHCP e o gateway.'},
+  {t:'Só um PC ficou sem rede',s:'Dez computadores continuam a trabalhar normalmente. Apenas um perdeu a ligação por cabo.',o:['Investigar primeiro o equipamento afetado, cabo/porta e placa de rede','Desligar todos os switches','Trocar o router da empresa'],c:0,f:'Como os restantes equipamentos continuam online, a investigação começa no ponto isolado: cabo, porta do switch, placa de rede e configuração IP.'},
+  {t:'Rede lenta',s:'Vários utilizadores dizem que a rede ficou lenta. A ligação continua disponível, mas aplicações e páginas demoram muito.',o:['Concluir imediatamente que é vírus','Comparar quem é afetado, medir a ligação e verificar utilização/interferências','Apagar todas as configurações IP'],c:1,f:'Primeiro delimita o impacto: quem, quando e onde. Depois mede latência/velocidade, verifica utilização, Wi-Fi/interferências e compara com uma máquina que funciona.'},
+  {t:'Gateway responde, Internet não',s:'O PC consegue comunicar com o gateway local, mas não consegue alcançar um endereço externo.',o:['Verificar a saída da rede: router, rota, NAT/ISP e firewall','Alterar o nome do computador','Criar uma nova conta de utilizador'],c:0,f:'Se o gateway responde, a ligação local está funcional. O próximo passo é investigar o caminho para fora da LAN: rota, NAT, firewall e ligação do ISP.'}
+ ],
+ gestao:[
+  {t:'Cliente furioso',s:'Um cliente liga irritado porque um problema continua sem solução e diz que está a considerar cancelar.',o:['Defender imediatamente a empresa','Ouvir, reconhecer o impacto, investigar e combinar um plano com prazo','Prometer qualquer solução para o acalmar'],c:1,f:'Primeiro baixa a tensão através de escuta e validação. Depois identifica a causa, define responsável, prazo realista e faz follow-up. Não prometas o que não podes entregar.'},
+  {t:'Conta em risco',s:'A utilização do serviço caiu bastante e a renovação aproxima-se, embora o cliente ainda não tenha reclamado.',o:['Esperar até o cliente reclamar','Investigar os sinais, falar com o cliente e criar um plano de recuperação','Fazer upsell imediatamente'],c:1,f:'O gestor deve agir de forma preventiva. Cruza dados de utilização, tickets, satisfação e contexto do cliente antes de propor uma ação.'},
+  {t:'Oportunidade de expansão',s:'Um cliente menciona que outro departamento começou a ter a mesma necessidade que a equipa atual.',o:['Enviar preço sem fazer perguntas','Explorar a necessidade e validar se existe valor antes de propor expansão','Ignorar porque não foi pedido formalmente'],c:1,f:'A oportunidade começa pela necessidade. Faz perguntas, entende o impacto e só depois articula uma solução com vendas ou equipa responsável.'},
+  {t:'SLA em risco',s:'Um ticket importante aproxima-se do limite de resolução acordado no SLA e ainda não foi resolvido.',o:['Esperar pelo prazo final','Acompanhar o ticket, alinhar internamente e comunicar o cliente antes de haver surpresa','Fechar o ticket sem resolver'],c:1,f:'O gestor acompanha o risco, coordena suporte/operações e mantém o cliente informado. O objetivo é evitar surpresa e garantir responsabilidade clara.'},
+  {t:'QBR',s:'Chega a reunião trimestral e o cliente quer saber se o serviço está a gerar valor.',o:['Falar apenas sobre funcionalidades','Apresentar resultados, métricas, problemas, oportunidades e próximos passos','Mostrar apenas uma lista de vendas'],c:1,f:'Uma QBR deve ligar o serviço aos objetivos do cliente. Resultados, métricas, riscos, oportunidades e ações futuras dão estrutura à conversa.'},
+  {t:'CRM',s:'Depois de uma chamada importante, descobres que o CRM não tem o novo contacto, decisão nem próximo passo.',o:['Guardar tudo apenas na memória','Registar contacto, interação, decisão, tarefa e próxima data no CRM','Apagar o histórico antigo'],c:1,f:'O CRM deve preservar contexto e permitir continuidade. Regista o que aconteceu, quem participou, o que foi decidido e qual é a próxima ação.'}
+ ]
+};
+function v11HTML(){
+ const a=state.area,d=V11[a],st=state.v11[a],title=a==='redes'?'Laboratório de Diagnóstico':'Simulação de Gestão de Contas';
+ const done=st.done.length;
+ return `<section class="v11 card ${done===d.length?'v11-done':''}" id="v11"><div class="v11-head"><div><div class="v11-kick">V11 · TREINO PRÁTICO</div><h2 class="v11-title">${title}</h2><p class="msg" style="margin:4px 0 0">${a==='redes'?'Resolve problemas como numa entrevista técnica: observa, testa e elimina hipóteses.':'Toma decisões como Gestor de Contas: ouve, diagnostica, alinha e acompanha.'}</p></div><div class="v11-score">${done}/${d.length} concluídos · ${st.score} XP</div></div><div class="v11-grid">${d.map((x,i)=>{const ok=st.done.includes(i);return `<article class="v11-card"><h3>${i+1}. ${x.t}</h3><div class="scenario">${x.s}</div><div class="v11-opts">${x.o.map((o,j)=>`<button class="v11-opt ${ok?(j===x.c?'correct':'') :''}" data-v11="${i}:${j}" ${ok?'disabled':''}>${String.fromCharCode(65+j)}) ${o}</button>`).join('')}</div><div class="v11-feedback ${ok?'open':''}" id="v11-f-${i}">${ok?'✓ '+x.f:''}</div></article>`}).join('')}</div>${done===d.length?'<div class="certbox" style="margin-top:12px"><h3>🏆 Treino concluído</h3><p class="msg">Terminaste todos os cenários desta área. Repete-os depois para treinar velocidade e explicação oral.</p></div>':''}<button class="complete v11-reset" data-v11reset="1">↻ Reiniciar treino desta área</button></section>`;
+}
+function v11Answer(i,j){
+ const a=state.area,x=V11[a][i],st=state.v11[a];if(st.done.includes(i))return;
+ const card=document.querySelector('#v11 .v11-card:nth-child('+(i+1)+')');if(!card)return;
+ card.querySelectorAll('.v11-opt').forEach((b,k)=>{b.disabled=true;if(k===x.c)b.classList.add('correct');else if(k===j)b.classList.add('wrong')});
+ const fb=card.querySelector('.v11-feedback');fb.textContent=(j===x.c?'✓ Correto. ':'✕ Não é a melhor primeira ação. ')+x.f;fb.classList.add('open');
+ st.done.push(i);if(j===x.c)st.score+=25;state.xp+=j===x.c?25:5;persist();
+ const sec=document.querySelector('#v11');if(sec){sec.querySelector('.v11-score').textContent=st.done.length+'/'+V11[a].length+' concluídos · '+st.score+' XP';}
+}
+function v11Reset(){state.v11[state.area]={score:0,done:[]};persist();keepScroll(renderApp)}
+
 function renderLessons(d){
   const aDone=state.done[state.area].length,aTot=d.lessons.length,aPct=Math.round(aDone/aTot*100);
   let h=`<div class="studybar">
@@ -374,6 +413,7 @@ function renderLessons(d){
   </div>`;
   h+=levelsHTML(d);
   h+=finCardHTML(d);
+  h+=v11HTML();
   if(d.siglas){
     h+=`<div class="sec">📚 SIGLAS</div><section class="card" id="siglas" data-tab="siglas"><div class="ch"><span class="num">★</span><h2>Siglas principais</h2></div>${tableHTML(['Sigla','Significado','Explicação'],d.siglas)}</section>`;
     h+=`<div class="sec">📖 TERMOS</div><section class="card" id="termos" data-tab="termos"><div class="ch"><span class="num">★</span><h2>Glossário</h2></div><input id="q" type="search" placeholder="🔎 Pesquisar termo..." aria-label="Pesquisar termo"><div id="g"></div></section>`;
@@ -627,7 +667,7 @@ function newSet(){keepScroll(()=>{ensureSet(true);renderApp()})}
 function resetV2(){
  if(confirm('Apagar todo o progresso, XP e respostas?')){
   localStorage.removeItem('guia_estudo_v2');
-  state.area='redes';state.all=false;state.xp=0;state.done={redes:[],gestao:[]};state.answers={};state.ok=[];state.wrong=[];state.nAns=0;state.set=null;state.week=null;state.round=0;state.sets={};state.weeks={};state.rounds={};state.revTry={};state.final=freshFinal();state.unl={redes:1,gestao:1};state.lt={redes:{},gestao:{}};state.seen={redes:[],gestao:[]};state.exw={};state.rvw={};
+  state.area='redes';state.all=false;state.xp=0;state.done={redes:[],gestao:[]};state.answers={};state.ok=[];state.wrong=[];state.nAns=0;state.set=null;state.week=null;state.round=0;state.sets={};state.weeks={};state.rounds={};state.revTry={};state.final=freshFinal();state.unl={redes:1,gestao:1};state.lt={redes:{},gestao:{}};state.seen={redes:[],gestao:[]};state.exw={};state.rvw={};state.v11={redes:{score:0,done:[]},gestao:{score:0,done:[]}};
   renderApp();
  }
 }
@@ -665,7 +705,7 @@ function renderTabs(d){
     if(k<u){d.lessons.slice(k*LVN,k*LVN+LVN).forEach((l,i)=>{const n=k*LVN+i+1;items.push(['lesson-'+pad(n),lvVisible(a,n)?pad(n)+' '+l.tab:'🔒 '+pad(n)])});items.push(['teste-'+(k+1),(lvAllDone(a,k)?'🧪 ':'🔒 ')+'Teste '+(k+1)])}
     else items.push(['nivel-'+(k+1),'🔒 Nível '+(k+1)]);
   }
-  items.push(['avaliacao','🎓 Avaliação']);
+  items.push(['v11','🎯 Treino V11'],['avaliacao','🎓 Avaliação']);
   if(d.siglas)items.push(['siglas','Siglas'],['termos','Termos']);
   items.push(['resumo','Resumo']);
   tabs.innerHTML=items.map(([id,t])=>`<button class="pill" data-target="${id}">${t}</button>`).join('');
@@ -741,6 +781,8 @@ app.addEventListener('click',e=>{
     panel.classList.toggle('open',!open);
     return;
   }
+  const v=e.target.closest('[data-v11]');if(v){const [i,j]=v.dataset.v11.split(':').map(Number);return v11Answer(i,j)}
+  if(e.target.closest('[data-v11reset]'))return v11Reset();
   const c=e.target.closest('[data-complete]');if(c)return completeLesson(Number(c.dataset.complete));
   const wk=e.target.closest('[data-wk]');if(wk)return wCheck(wk.dataset.wk);
   const wv=e.target.closest('[data-wv]');if(wv)return wVerdict(wv.dataset.wv);
