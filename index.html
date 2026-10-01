@@ -305,7 +305,7 @@ const norm=s=>s.replace(/^[^\p{L}\p{N}]+/u,'').split(':')[0].trim().toLowerCase(
 /* ========== 2. ESTADO ========== */
 const savedV2=JSON.parse(localStorage.getItem('guia_estudo_v2')||'null');
 const state=Object.assign({area:'redes',all:false,xp:0,done:{redes:[],gestao:[]},answers:{},started:Date.now()},savedV2||{});
-state.done=state.done||{redes:[],gestao:[]};state.answers=state.answers||{};state.xp=state.xp||0;state.ok=state.ok||[];state.wrong=state.wrong||[];state.nAns=state.nAns||0;state.round=state.round||0;state.revTry={};state.final=state.final||freshFinal();state.unl=state.unl||{redes:1,gestao:1};state.lt=state.lt||{redes:{},gestao:{}};
+state.done=state.done||{redes:[],gestao:[]};state.answers=state.answers||{};state.xp=state.xp||0;state.ok=state.ok||[];state.wrong=state.wrong||[];state.nAns=state.nAns||0;state.round=state.round||0;state.revTry={};state.final=state.final||freshFinal();state.unl=state.unl||{redes:1,gestao:1};state.lt=state.lt||{redes:{},gestao:{}};state.seen=state.seen||{redes:[],gestao:[]};
 const persist=()=>localStorage.setItem('guia_estudo_v2',JSON.stringify(state));
 const lessonCount=()=>studyData[state.area].lessons.length;
 const totalLessons=()=>studyData.redes.lessons.length+studyData.gestao.lessons.length;
@@ -320,12 +320,12 @@ const tableHTML=(h,rows,id)=>`<div class="tbl"><table><thead><tr>${h.map(x=>`<th
 
 function cardHTML(id,num,title,diagram,exp){
   const n=parseInt(String(num).replace(/\D/g,''),10);
-  const done=state.done[state.area].includes(n);
+  const done=state.done[state.area].includes(n),seen=state.seen[state.area].includes(n);
   return `<section class="card" id="${id}" data-tab="${id}" data-lesson="${n}">
     <div class="ch"><span class="num">${num}</span><h2>${title}</h2></div>
     <div class="dg">${diagram}</div>
     ${exp?`<button class="ex" aria-expanded="false" aria-controls="${id}-x"><b style="font-weight:400">Ver explicação</b><span>▾</span></button><div class="xp" id="${id}-x"><div><p>${exp}</p></div></div>`:''}
-    ${Number.isFinite(n)&&n>0?`<button class="complete ${done?'done':''}" data-complete="${n}">${done?'✓ Aula concluída':'□ Marcar aula como concluída'} <span>+100 XP</span></button>`:''}
+    ${Number.isFinite(n)&&n>0?`<button class="complete ${done?'done':''}" data-complete="${n}" ${(!done&&!seen)?'disabled':''}>${done?'✓ Aula concluída':seen?'□ Marcar aula como concluída':'🔒 Abre a explicação para concluir'} <span>+100 XP</span></button>`:''}
   </section>`;
 }
 
@@ -482,13 +482,16 @@ function testHTML(a,k){
   :`<button class="complete" data-ltsubmit="${k}" ${n<5||len<20?'disabled':''}>🧪 Concluir teste</button>`;
  return `<p class="msg" style="margin:0 0 10px">5 perguntas + 1 resposta escrita · passas com 3 certas e a resposta escrita</p>`+qs+open+fim;
 }
+function lvVisible(a,n){const lo=Math.floor((n-1)/LVN)*LVN+1,dn=state.done[a];for(let m=lo;m<n;m++)if(!dn.includes(m))return false;return true}
+function lvAllDone(a,k){const lo=k*LVN+1,hi=Math.min(lo+LVN-1,studyData[a].lessons.length);for(let m=lo;m<=hi;m++)if(!state.done[a].includes(m))return false;return true}
+const lockedLesson=n=>`<section class="card" id="lesson-${pad(n)}" data-tab="lesson-${pad(n)}"><div class="ch"><span class="num">🔒</span><h2>Tema ${pad(n)} bloqueado</h2></div><p class="msg">Estuda e conclui o tema ${pad(n-1)} para abrir este.</p></section>`;
 function levelsHTML(d){
  const a=state.area,L=d.lessons,u=state.unl[a];let h='';
  for(let k=0;k<lvCount(a);k++){
   const lo=k*LVN,hi=Math.min(lo+LVN,L.length);
   if(k<u){
-   h+=`<div class="sec">NÍVEL ${k+1} · TEMAS ${pad(lo+1)}–${pad(hi)}</div>`+L.slice(lo,hi).map((l,i)=>cardHTML('lesson-'+pad(lo+i+1),pad(lo+i+1),l.title,l.diagram,l.exp)).join('');
-   h+=`<section class="card" id="teste-${k+1}" data-tab="teste-${k+1}"><div class="ch"><span class="num">🧪</span><h2>Teste do Nível ${k+1}</h2></div><div class="dg">${testHTML(a,k)}</div></section>`;
+   h+=`<div class="sec">NÍVEL ${k+1} · TEMAS ${pad(lo+1)}–${pad(hi)}</div>`+L.slice(lo,hi).map((l,i)=>lvVisible(a,lo+i+1)?cardHTML('lesson-'+pad(lo+i+1),pad(lo+i+1),l.title,l.diagram,l.exp):lockedLesson(lo+i+1)).join('');
+   h+=lvAllDone(a,k)?`<section class="card" id="teste-${k+1}" data-tab="teste-${k+1}"><div class="ch"><span class="num">🧪</span><h2>Teste do Nível ${k+1}</h2></div><div class="dg">${testHTML(a,k)}</div></section>`:`<section class="card" id="teste-${k+1}" data-tab="teste-${k+1}"><div class="ch"><span class="num">🔒</span><h2>Teste do Nível ${k+1} bloqueado</h2></div><p class="msg">Conclui os temas ${pad(lo+1)}–${pad(hi)} para abrir o teste.</p></section>`;
   }else h+=`<div class="sec">NÍVEL ${k+1} · TEMAS ${pad(lo+1)}–${pad(hi)}</div><section class="card" id="nivel-${k+1}" data-tab="nivel-${k+1}"><div class="ch"><span class="num">🔒</span><h2>Nível ${k+1} bloqueado</h2></div><p class="msg">Passa no Teste do Nível ${k} para abrir estes temas.</p></section>`;
  }
  return h;
@@ -574,7 +577,7 @@ function newSet(){keepScroll(()=>{ensureSet(true);renderApp()})}
 function resetV2(){
  if(confirm('Apagar todo o progresso, XP e respostas?')){
   localStorage.removeItem('guia_estudo_v2');
-  state.area='redes';state.all=false;state.xp=0;state.done={redes:[],gestao:[]};state.answers={};state.ok=[];state.wrong=[];state.nAns=0;state.set=null;state.week=null;state.round=0;state.revTry={};state.final=freshFinal();state.unl={redes:1,gestao:1};state.lt={redes:{},gestao:{}};
+  state.area='redes';state.all=false;state.xp=0;state.done={redes:[],gestao:[]};state.answers={};state.ok=[];state.wrong=[];state.nAns=0;state.set=null;state.week=null;state.round=0;state.revTry={};state.final=freshFinal();state.unl={redes:1,gestao:1};state.lt={redes:{},gestao:{}};state.seen={redes:[],gestao:[]};
   renderApp();
  }
 }
@@ -609,7 +612,7 @@ function filterGlossary(e){renderGlossary(e.target.value)}
 function renderTabs(d){
   const a=state.area,u=state.unl[a],items=[];
   for(let k=0;k<lvCount(a);k++){
-    if(k<u){d.lessons.slice(k*LVN,k*LVN+LVN).forEach((l,i)=>{const n=k*LVN+i+1;items.push(['lesson-'+pad(n),pad(n)+' '+l.tab])});items.push(['teste-'+(k+1),'🧪 Teste '+(k+1)])}
+    if(k<u){d.lessons.slice(k*LVN,k*LVN+LVN).forEach((l,i)=>{const n=k*LVN+i+1;items.push(['lesson-'+pad(n),lvVisible(a,n)?pad(n)+' '+l.tab:'🔒 '+pad(n)])});items.push(['teste-'+(k+1),(lvAllDone(a,k)?'🧪 ':'🔒 ')+'Teste '+(k+1)])}
     else items.push(['nivel-'+(k+1),'🔒 Nível '+(k+1)]);
   }
   items.push(['avaliacao','🎓 Avaliação']);
@@ -651,7 +654,15 @@ function observe(){
 }
 
 /* ========== 5. INTERAÇÕES ========== */
+function markSeen(card){
+ const n=Number(card.dataset.lesson);if(!n)return;
+ const sn=state.seen[state.area];if(sn.includes(n))return;
+ sn.push(n);persist();
+ const b=card.querySelector('[data-complete]');
+ if(b&&b.disabled&&!b.classList.contains('done')){b.disabled=false;b.innerHTML='□ Marcar aula como concluída <span>+100 XP</span>'}
+}
 function setOpen(card,open){
+ if(open)markSeen(card);
   const b=card.querySelector('.ex');if(!b)return;
   b.setAttribute('aria-expanded',open);
   b.firstChild.textContent=open?'Ocultar explicação':'Ver explicação';
