@@ -149,7 +149,7 @@ L('Internet vs Web','Internet vs Web',C(['🛣️','INTERNET','A infraestrutura:
 L('IP','Endereço IP',C(['🔢','IPv4','192.168.1.10 (32 bits)'],['🔣','IPv6','Muito mais endereços (128 bits)'],['🏠','Privado','Usado dentro da rede local'],['🌍','Público','Visto na Internet']),'O IP identifica e localiza cada dispositivo, como a morada de uma casa.'),
 L('TCP/IP','TCP/IP',F('APLICAÇÃO: HTTP, DNS','TRANSPORTE: TCP/UDP','INTERNET: IP','ACESSO À REDE: Wi-Fi, Ethernet'),'Aplicação = serviços usados. Transporte = entrega fiável. Internet = endereços e rotas. Acesso à rede = ligação física.')
 ]},
-gestao:{theme:'gold',kicker:'GESTÃO DE CONTAS',title:'GESTOR DE CONTAS JÚNIOR',subtitle:'18 temas, siglas e termos para a entrevista',
+gestao:{theme:'gold',kicker:'GESTÃO DE CONTAS',title:'GESTOR DE CONTAS JÚNIOR',subtitle:'18 temas, siglas e termos essenciais',
 summary:[F('Cliente','Relacionamento','Valor','Retenção','Expansão'),'Conhece o cliente, cuida da relação, entrega valor. Um júnior mostra curiosidade, organização, empatia e vontade de aprender.'],
 lessons:[
 L('Papel','O papel do Gestor de Contas',C(['🤝','Relacionamento'],['👀','Acompanhar clientes'],['🔍','Necessidades'],['🛡️','Proteger receita'],['🚀','Criar oportunidades']),'Acompanha o cliente depois da venda, gere a relação, identifica necessidades e ajuda a manter e fazer crescer a receita.'),
@@ -499,7 +499,7 @@ function lvSet(a,k){
  const sh=x=>x.map(v=>[r(),v]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
  return [...sh(mine),...sh(rest)].slice(0,5);
 }
-function claudePrompt(a,k){const t=lt(a,k),o=OPENQ[a][k];return `Corrige a minha resposta (estudo para entrevista de Gestor de Contas Júnior / Redes).\nPergunta: ${o[0]}\nA minha resposta: ${t.open}\nResposta modelo: ${o[1]}\nDiz o que está certo, o que falta e dá uma nota de 0 a 10.`}
+function claudePrompt(a,k){const t=lt(a,k),o=OPENQ[a][k];return `Corrige a minha resposta (guia de estudo de Redes e Gestão de Contas).\nPergunta: ${o[0]}\nA minha resposta: ${t.open}\nResposta modelo: ${o[1]}\nDiz o que está certo, o que falta e dá uma nota de 0 a 10.`}
 function testHTML(a,k){
  const t=lt(a,k),ids=lvSet(a,k),n=Object.keys(t.ans).length,o=OPENQ[a][k],txt=nrm(t.open),last=k===lvCount(a)-1,len=(t.open||'').trim().length;
  const qs=ids.map((id,i)=>{const q=BANK[id];return `<div class="exq"><b>${i+1}. ${q[1]}</b>${q[2].map((x,j)=>{let c='';if(t.done)c=j===q[3]?'ok':t.ans[id]===j?'no':'';else if(t.ans[id]===j)c='sel';
@@ -770,7 +770,7 @@ function applyV(ctx,id){
 function wCheck(k){const [ctx,id]=k.split('|'),r=rec(ctx,+id);if(r.t.trim().length<2)return;r.c=true;r.v=grade(+id,r.t);state.nAns++;keepScroll(()=>{applyV(ctx,+id);persist();renderApp()})}
 function wVerdict(k){const [ctx,id,v]=k.split('|'),r=rec(ctx,+id);r.v=v;keepScroll(()=>{applyV(ctx,+id);persist();renderApp()})}
 function wRetry(k){const [ctx,id]=k.split('|'),r=rec(ctx,+id);r.c=false;r.v='';persist();keepScroll(renderApp)}
-function wCopy(k){const [ctx,id]=k.split('|'),r=rec(ctx,+id),q=BANK[+id];copyText(`Corrige a minha resposta (estudo para entrevista de Gestor de Contas Júnior / Redes).\nPergunta: ${q[1]}\nA minha resposta: ${r.t}\nResposta esperada: ${q[2][q[3]]}\nDiz o que está certo, o que falta e dá uma nota de 0 a 10.`,document.querySelector('[data-wc="'+k+'"]'))}
+function wCopy(k){const [ctx,id]=k.split('|'),r=rec(ctx,+id),q=BANK[+id];copyText(`Corrige a minha resposta (guia de estudo de Redes e Gestão de Contas).\nPergunta: ${q[1]}\nA minha resposta: ${r.t}\nResposta esperada: ${q[2][q[3]]}\nDiz o que está certo, o que falta e dá uma nota de 0 a 10.`,document.querySelector('[data-wc="'+k+'"]'))}
 function ltReady(a,k){const ctx='lt:'+a+':'+k;return lvSet(a,k).every(id=>rec(ctx,id).t.trim().length>=2)&&lt(a,k).open.trim().length>=20}
 function finReady(a){return finSet(a).every(id=>rec('fin:'+a,id).t.trim().length>=2)}
 function wInput(el){
