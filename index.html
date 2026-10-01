@@ -305,7 +305,7 @@ const norm=s=>s.replace(/^[^\p{L}\p{N}]+/u,'').split(':')[0].trim().toLowerCase(
 /* ========== 2. ESTADO ========== */
 const savedV2=JSON.parse(localStorage.getItem('guia_estudo_v2')||'null');
 const state=Object.assign({area:'redes',all:false,xp:0,done:{redes:[],gestao:[]},answers:{},started:Date.now()},savedV2||{});
-state.done=state.done||{redes:[],gestao:[]};state.answers=state.answers||{};state.xp=state.xp||0;state.ok=state.ok||[];state.wrong=state.wrong||[];state.nAns=state.nAns||0;state.round=state.round||0;state.revTry={};state.final=state.final||freshFinal();state.unl=state.unl||{redes:1,gestao:1};state.lt=state.lt||{redes:{},gestao:{}};state.seen=state.seen||{redes:[],gestao:[]};
+state.done=state.done||{redes:[],gestao:[]};state.answers=state.answers||{};state.xp=state.xp||0;state.ok=state.ok||[];state.wrong=state.wrong||[];state.nAns=state.nAns||0;state.round=state.round||0;state.revTry={};state.final=state.final||freshFinal();state.unl=state.unl||{redes:1,gestao:1};state.lt=state.lt||{redes:{},gestao:{}};state.seen=state.seen||{redes:[],gestao:[]};state.exw=state.exw||{};state.rvw=state.rvw||{};
 const persist=()=>localStorage.setItem('guia_estudo_v2',JSON.stringify(state));
 const lessonCount=()=>studyData[state.area].lessons.length;
 const totalLessons=()=>studyData.redes.lessons.length+studyData.gestao.lessons.length;
@@ -381,7 +381,7 @@ const BANK=[
 ['r','Porque existe o IPv6?',['O IPv4 é mais seguro','Há poucos endereços IPv4','É mais barato','Usa cabos'],1],
 ['r','Numa rede, o cliente:',['Oferece serviços','Faz pedidos ao servidor','Só guarda dados','É sempre um router'],1],
 ['r','O modem serve para:',['Converter o sinal do operador','Criar aplicações','Guardar ficheiros','Aumentar a bateria'],0],
-['r','Qual destes é um risco das redes?',['Malware','Escalabilidade','Produtividade','Partilha'],0],
+['r','Dá um exemplo de risco das redes.',['Malware','Escalabilidade','Produtividade','Partilha'],0],
 ['r','Qual é uma vantagem das redes?',['Partilha de recursos','Mais vírus','Menos comunicação','Dependência total'],0],
 ['r','O TCP garante:',['Entrega completa e ordenada','Nomes de sites','Wi-Fi mais rápido','O endereço da casa'],0],
 ['r','Qual é normalmente mais estável?',['Wi-Fi','Cabo Ethernet','Bluetooth','Nenhuma'],1],
@@ -415,7 +415,7 @@ function pickSet(seed){const r=rng(seed),sh=a=>a.map(x=>[r(),x]).sort((p,q)=>p[0
  return [...sh(ids.filter(i=>BANK[i][0]==='r')).slice(0,4),...sh(ids.filter(i=>BANK[i][0]==='g')).slice(0,4)]}
 function ensureSet(force){
  const w=weekKey();
- if(force||!state.set||state.week!==w){state.round=force?state.round+1:0;state.week=w;state.set=pickSet(w+':'+state.round);state.answers={};persist()}
+ if(force||!state.set||state.week!==w){state.round=force?state.round+1:0;state.week=w;state.set=pickSet(w+':'+state.round);state.answers={};state.exw={};persist()}
 }
 function keepScroll(fn){
  const y=window.scrollY,abertos=[...document.querySelectorAll('.card.open')].map(c=>c.id);
@@ -534,10 +534,10 @@ function renderV2Extras(){
  ensureSet();
  const fp=$('#finPanel');if(fp)fp.innerHTML=finHTML();
  const ep=$('#exercisePanel');if(ep){
-   const feitas=state.set.filter(id=>state.answers[id]!==undefined).length;
-   ep.innerHTML=`<p class="msg" style="margin:0 0 10px">Desafio ${state.week} · ${feitas}/${state.set.length} respondidas</p>`+state.set.map((id,k)=>qHTML(id,k+1,state.answers[id],false)).join('')+`<button class="complete" data-newset="1">🔄 Novo desafio</button>`;
+   const feitas=state.set.filter(id=>rec('ex',id).c).length;
+   ep.innerHTML=`<p class="msg" style="margin:0 0 10px">Desafio ${state.week} · ${feitas}/${state.set.length} respondidas</p>`+state.set.map((id,k)=>wqHTML('ex',id,k+1,'live')).join('')+`<button class="complete" data-newset="1">🔄 Novo desafio</button>`;
  }
- const rp=$('#reviewPanel');if(rp)rp.innerHTML=state.wrong.length?`<p class="msg" style="margin:0 0 10px">${state.wrong.length} pergunta(s) para rever</p>`+state.wrong.map((id,k)=>qHTML(id,k+1,undefined,true)).join(''):'<p class="msg">Sem erros para rever. 👏</p>';
+ const rp=$('#reviewPanel');if(rp)rp.innerHTML=state.wrong.length?`<p class="msg" style="margin:0 0 10px">${state.wrong.length} pergunta(s) para rever</p>`+state.wrong.map((id,k)=>wqHTML('rv',id,k+1,'live')).join(''):'<p class="msg">Sem erros para rever. 👏</p>';
  const pp=$('#progressPanel');if(pp)pp.innerHTML=`<div class="v2grid">
    <div class="v2stat"><small>🌐 Redes</small><b>${state.done.redes.length}/15</b></div>
    <div class="v2stat"><small>💼 Gestão</small><b>${state.done.gestao.length}/18</b></div>
@@ -577,7 +577,7 @@ function newSet(){keepScroll(()=>{ensureSet(true);renderApp()})}
 function resetV2(){
  if(confirm('Apagar todo o progresso, XP e respostas?')){
   localStorage.removeItem('guia_estudo_v2');
-  state.area='redes';state.all=false;state.xp=0;state.done={redes:[],gestao:[]};state.answers={};state.ok=[];state.wrong=[];state.nAns=0;state.set=null;state.week=null;state.round=0;state.revTry={};state.final=freshFinal();state.unl={redes:1,gestao:1};state.lt={redes:{},gestao:{}};state.seen={redes:[],gestao:[]};
+  state.area='redes';state.all=false;state.xp=0;state.done={redes:[],gestao:[]};state.answers={};state.ok=[];state.wrong=[];state.nAns=0;state.set=null;state.week=null;state.round=0;state.revTry={};state.final=freshFinal();state.unl={redes:1,gestao:1};state.lt={redes:{},gestao:{}};state.seen={redes:[],gestao:[]};state.exw={};state.rvw={};
   renderApp();
  }
 }
@@ -681,7 +681,10 @@ document.querySelector('.seg').addEventListener('click',e=>{const b=e.target.clo
 tabs.addEventListener('click',e=>{const p=e.target.closest('.pill');p&&scrollToLesson(p.dataset.target)});
 app.addEventListener('click',e=>{
   const c=e.target.closest('[data-complete]');if(c)return completeLesson(Number(c.dataset.complete));
-  const a=e.target.closest('[data-answer]');if(a){const [i,j]=a.dataset.answer.split(':').map(Number);return answerV2(i,j)}
+  const wk=e.target.closest('[data-wk]');if(wk)return wCheck(wk.dataset.wk);
+  const wv=e.target.closest('[data-wv]');if(wv)return wVerdict(wv.dataset.wv);
+  const wc=e.target.closest('[data-wc]');if(wc)return wCopy(wc.dataset.wc);
+  const wr=e.target.closest('[data-wr]');if(wr)return wRetry(wr.dataset.wr);
   const rv=e.target.closest('[data-rev]');if(rv){const [i,j]=rv.dataset.rev.split(':').map(Number);return answerRev(i,j)}
   if(e.target.closest('[data-newset]'))return newSet();
   const fn=e.target.closest('[data-fin]');if(fn){const [i,j]=fn.dataset.fin.split(':').map(Number);return finAnswer(i,j)}
@@ -699,8 +702,86 @@ app.addEventListener('click',e=>{
   if(e.target.id==='all')toggleAll();
 });
 app.addEventListener('keydown',e=>{const it=e.target.closest&&e.target.closest('[data-t]');if(it&&(e.key==='Enter'||e.key===' ')){e.preventDefault();pickItem(it)}});
-app.addEventListener('input',e=>{if(e.target.id==='q')filterGlossary(e);
-  if(e.target.id&&e.target.id.startsWith('ta-')){const k=+e.target.id.slice(3),t=lt(state.area,k);t.open=e.target.value;persist();const b=document.querySelector('[data-ltsubmit="'+k+'"]');if(b)b.disabled=Object.keys(t.ans).length<5||t.open.trim().length<20}});
+app.addEventListener('input',e=>{if(e.target.id==='q')filterGlossary(e);if(e.target.dataset&&e.target.dataset.w)return wInput(e.target);
+  if(e.target.id&&e.target.id.startsWith('ta-')){const k=+e.target.id.slice(3),t=lt(state.area,k);t.open=e.target.value;persist();const b=document.querySelector('[data-ltsubmit="'+k+'"]');if(b)b.disabled=!ltReady(state.area,k)}});
+/* ===== RESPOSTAS ESCRITAS (sobrepõem as versões de escolha múltipla) ===== */
+const STOP=['para','que','com','uma','dos','das','por','mais','entre','como','sem','numa','pela','pelo','esta','este','isso','sobre'];
+const VL={ok:['✓ Acertei','g'],mid:['~ Quase','gold'],no:['✕ Errei','red']};
+function rec(ctx,id){
+ const p=ctx.split(':');let o;
+ if(p[0]==='ex')o=state.exw;else if(p[0]==='rv')o=state.rvw;
+ else if(p[0]==='lt'){const t=lt(p[1],+p[2]);o=t.w=t.w||{}}
+ else{const f=state.final[p[1]];o=f.w=f.w||{}}
+ return o[id]||(o[id]={t:'',c:false,v:''});
+}
+function kwOf(id){const q=BANK[id],t=nrm(q[2][q[3]]);return [...new Set(t.split(/[^a-z0-9]+/).filter(w=>w.length>=4&&!STOP.includes(w)).map(w=>w.slice(0,5)))]}
+function grade(id,text){const k=kwOf(id),t=nrm(text);if(!k.length)return 'mid';const r=k.filter(w=>t.includes(w)).length/k.length;return r>=.5?'ok':r>=.25?'mid':'no'}
+function copyText(t,btn){
+ const ok=()=>{if(btn)btn.textContent='✓ Copiado! Cola no Claude'};
+ const fb=()=>{const x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();try{document.execCommand('copy')}catch(e){}x.remove();ok()};
+ if(navigator.clipboard)navigator.clipboard.writeText(t).then(ok).catch(fb);else fb();
+}
+function wqHTML(ctx,id,n,mode,done){
+ const q=BANK[id],r=rec(ctx,id),k=ctx+'|'+id,show=mode==='live'?r.c:done,lock=show?'readonly':'';
+ let h=`<div class="exq"><b>${n}. ${q[1]}</b><textarea class="ans" rows="2" data-w="${k}" placeholder="Escreve a tua resposta..." ${lock}>${esc(r.t)}</textarea>`;
+ if(show){
+  const chips=mode==='live'?Object.entries(VL).map(([v,[l,c]])=>`<button class="tag ${c}" style="${r.v===v?'':'opacity:.4'}" data-wv="${k}|${v}">${l}</button>`).join(''):`<span class="tag ${VL[r.v||'no'][1]}">${VL[r.v||'no'][0]}</span>`;
+  h+=`<p class="msg"><b>Resposta esperada:</b> ${esc(q[2][q[3]])}</p><div class="tags">${chips}</div><button class="complete" data-wc="${k}">🤖 Corrigir com Claude (copiar)</button>`;
+  if(mode==='live'&&r.v!=='ok')h+=`<button class="complete" data-wr="${k}">↺ Tentar de novo</button>`;
+ }else if(mode==='live')h+=`<button class="complete" data-wk="${k}" ${r.t.trim().length<2?'disabled':''}>Verificar</button>`;
+ return h+'</div>';
+}
+function applyV(ctx,id){
+ const r=rec(ctx,id);
+ if(r.v==='ok'){if(ctx==='ex'&&!state.ok.includes(id)){state.ok.push(id);state.xp+=25}state.wrong=state.wrong.filter(x=>x!==id);if(ctx==='rv')delete state.rvw[id]}
+ else if(r.v==='no'&&!state.wrong.includes(id))state.wrong.push(id);
+}
+function wCheck(k){const [ctx,id]=k.split('|'),r=rec(ctx,+id);if(r.t.trim().length<2)return;r.c=true;r.v=grade(+id,r.t);state.nAns++;keepScroll(()=>{applyV(ctx,+id);persist();renderApp()})}
+function wVerdict(k){const [ctx,id,v]=k.split('|'),r=rec(ctx,+id);r.v=v;keepScroll(()=>{applyV(ctx,+id);persist();renderApp()})}
+function wRetry(k){const [ctx,id]=k.split('|'),r=rec(ctx,+id);r.c=false;r.v='';persist();keepScroll(renderApp)}
+function wCopy(k){const [ctx,id]=k.split('|'),r=rec(ctx,+id),q=BANK[+id];copyText(`Corrige a minha resposta (estudo para entrevista de Gestor de Contas Júnior / Redes).\nPergunta: ${q[1]}\nA minha resposta: ${r.t}\nResposta esperada: ${q[2][q[3]]}\nDiz o que está certo, o que falta e dá uma nota de 0 a 10.`,document.querySelector('[data-wc="'+k+'"]'))}
+function ltReady(a,k){const ctx='lt:'+a+':'+k;return lvSet(a,k).every(id=>rec(ctx,id).t.trim().length>=2)&&lt(a,k).open.trim().length>=20}
+function finReady(a){return finSet(a).every(id=>rec('fin:'+a,id).t.trim().length>=2)}
+function wInput(el){
+ const [ctx,id]=el.dataset.w.split('|');rec(ctx,+id).t=el.value;persist();
+ const b=document.querySelector('[data-wk="'+el.dataset.w+'"]');if(b)b.disabled=el.value.trim().length<2;
+ const ls=document.querySelector('[data-ltsubmit]');if(ls)ls.disabled=!ltReady(state.area,+ls.dataset.ltsubmit);
+ const fs=document.querySelector('[data-finsubmit]');if(fs)fs.disabled=!finReady(state.area);
+}
+function testHTML(a,k){
+ const t=lt(a,k),ids=lvSet(a,k),ctx='lt:'+a+':'+k,o=OPENQ[a][k],txt=nrm(t.open),last=k===lvCount(a)-1;
+ const qs=ids.map((id,i)=>wqHTML(ctx,id,i+1,'test',t.done)).join('');
+ let fb='';
+ if(t.done){const ks=o[2].map(w=>[w.split('|')[0],w.split('|').some(x=>txt.includes(nrm(x)))]);
+  fb=`<p class="msg"><b>Resposta modelo:</b> ${o[1]}</p><div class="tags">${ks.map(([w,ok])=>`<span class="tag ${ok?'g':'red'}">${ok?'✓':'✕'} ${w}</span>`).join('')}</div><button class="complete" data-copy="${a}:${k}">🤖 Corrigir com Claude (copiar)</button><a class="complete" style="display:block;text-align:center;text-decoration:none" href="https://claude.ai" target="_blank" rel="noopener">Abrir o Claude ↗</a>`}
+ const open=`<div class="exq"><b>✍️ ${o[0]}</b><textarea class="ans" id="ta-${k}" rows="4" placeholder="Escreve a tua resposta (mín. 20 letras)..." ${t.done?'readonly':''}>${esc(t.open)}</textarea>${fb}</div>`;
+ const fim=t.done?`<div class="certbox"><h3>${t.score}/5 · ${t.pass?'✅ NÍVEL SUPERADO':'❌ AINDA NÃO'}</h3><p class="msg">${t.pass?(last?'Último nível! A Avaliação final está aberta.':'🔓 Nível '+(k+2)+' desbloqueado.'):'Precisas de 3 certas e da resposta longa. Revê e tenta de novo.'}</p></div>`+(t.pass?`<button class="complete" data-jump="${last?'avaliacao':'lesson-'+pad(k*LVN+LVN+1)}">➡️ ${last?'Ir para a Avaliação final':'Começar o Nível '+(k+2)}</button>`:'')+`<button class="complete" data-ltretry="${k}">🔄 Tentar de novo</button>`
+  :`<button class="complete" data-ltsubmit="${k}" ${ltReady(a,k)?'':'disabled'}>🧪 Concluir teste</button>`;
+ return `<p class="msg" style="margin:0 0 10px">5 perguntas escritas + 1 resposta longa · passas com 3 certas</p>`+qs+open+fim;
+}
+function ltSubmit(k){
+ const a=state.area,t=lt(a,k),ids=lvSet(a,k),ctx='lt:'+a+':'+k;if(!ltReady(a,k))return;
+ let s=0;ids.forEach(id=>{const r=rec(ctx,id);r.v=grade(id,r.t);r.c=true;s+=r.v==='ok'?1:r.v==='mid'?.5:0;if(r.v==='no'){if(!state.wrong.includes(id))state.wrong.push(id)}else state.wrong=state.wrong.filter(x=>x!==id)});
+ t.done=true;t.score=s;t.pass=s>=3;
+ if(t.pass){state.unl[a]=Math.max(state.unl[a],Math.min(lvCount(a),k+2));if(!t.paid){t.paid=true;state.xp+=100}}
+ persist();keepScroll(renderApp);
+}
+function ltRetry(k){const t=lt(state.area,k);t.att++;t.w={};t.done=false;t.score=0;t.pass=false;persist();keepScroll(renderApp)}
+function finHTML(){
+ const a=state.area,f=state.final[a],ids=finSet(a),ctx='fin:'+a;
+ const qs=ids.map((id,k)=>wqHTML(ctx,id,k+1,'test',f.done)).join('');
+ const fim=f.done?`<div class="certbox"><h3>${f.score}/10 · ${f.pass?'✅ APROVADO':'❌ AINDA NÃO'}</h3><p class="msg">${f.pass?'Parabéns! A primeira aprovação dá +200 XP.':'Precisas de 7 certas. Revê os erros e tenta outra vez.'}</p></div><button class="complete" data-finretry="1">🔄 Tentar de novo (perguntas novas)</button>`
+  :`<button class="complete" data-finsubmit="1" ${finReady(a)?'':'disabled'}>🎓 Concluir avaliação</button>`;
+ return `<p class="msg" style="margin:0 0 10px">10 perguntas escritas · aprovação com 7 certas${f.best?' · melhor resultado: '+f.best+'/10':''}</p>`+qs+fim;
+}
+function finSubmit(){
+ const a=state.area,f=state.final[a],ids=finSet(a),ctx='fin:'+a;if(!finReady(a))return;
+ let s=0;ids.forEach(id=>{const r=rec(ctx,id);r.v=grade(id,r.t);r.c=true;s+=r.v==='ok'?1:r.v==='mid'?.5:0;if(r.v==='no'){if(!state.wrong.includes(id))state.wrong.push(id)}else state.wrong=state.wrong.filter(x=>x!==id)});
+ f.done=true;f.score=s;f.best=Math.max(f.best||0,s);f.pass=s>=7;
+ if(f.pass&&!f.paid){f.paid=true;state.xp+=200}
+ persist();keepScroll(renderApp);
+}
+function finRetry(){const f=state.final[state.area];f.att++;f.w={};f.done=false;f.score=0;f.pass=false;persist();keepScroll(renderApp)}
 window.addEventListener('resize',updateBar);
 renderApp();
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
