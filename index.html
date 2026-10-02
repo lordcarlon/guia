@@ -98,6 +98,7 @@ td:nth-child(2){color:var(--t)}
 .v12-close{position:absolute;right:16px;top:16px;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.7);color:#fff;font-size:1.1rem;cursor:pointer;z-index:2}
 .v12-modal-box{overflow:auto}.v12-modal-img{max-height:52vh}
 .v12-modal-extra{margin:10px 2px 4px;padding:12px;border-left:3px solid var(--a);border-radius:0 10px 10px 0;background:rgba(var(--rgb),.08);color:var(--t);font-size:.86rem;line-height:1.55}
+.v12-modal-extra p{margin:0 0 8px}.v12-modal-extra ul{margin:0 0 0 18px;padding:0}.v12-modal-extra li{margin-bottom:5px}
 .v12-modal-extra b{display:block;font:.62rem "Space Mono";letter-spacing:1.4px;color:var(--a);margin-bottom:4px}
 .v12-more{display:inline-block;margin-top:7px;font:.62rem "Space Mono";color:var(--a)}
 .v12-note{margin-top:12px;padding:11px 12px;border-left:3px solid var(--a);border-radius:0 10px 10px 0;background:rgba(var(--rgb),.05);color:var(--m);font-size:.72rem;line-height:1.5}
@@ -473,25 +474,26 @@ function v11Answer(i,j){
 }
 function v11Reset(){state.v11[state.area]={score:0,done:[]};persist();keepScroll(renderApp)}
 
+const X=(e,...l)=>`<p>${e}</p><ul>${l.map(x=>`<li>${x}</li>`).join('')}</ul>`;
 const V12_EXTRA={
-'Sem Internet':'Verifica por ordem: cabo ou Wi-Fi, IP, gateway e DNS. Se o gateway responde mas o site não abre, suspeita do DNS.',
-'Site não abre':'Testa pelo IP: se abre por IP mas não pelo nome, o problema é o DNS.',
-'IP 169.254.x.x':'É um IP automático (APIPA): o DHCP não respondeu. Verifica o cabo, o router e o serviço DHCP.',
-'Um PC sem rede':'Começa pelo físico: cabo, porta do switch e luzes. Depois confirma o IP.',
-'Rede lenta':'Vê se é só um dispositivo ou todos. Se forem todos, procura consumo elevado ou congestionamento.',
-'Gateway responde':'Se o gateway responde, a rede local está bem. O problema pode estar no ISP ou no DNS.',
-'Cliente furioso':'Ouve sem interromper, reconhece o problema, propõe uma ação com prazo e confirma depois.',
-'Conta em risco':'Sinais de risco: menos uso, tickets sem resposta e contactos que desaparecem. Age antes do churn.',
-'Oportunidade de expansão':'Upsell é um plano superior; cross-sell é um serviço adicional. Parte sempre de uma necessidade real.',
-'SLA em risco':'Avisa o cliente cedo, alinha com a equipa interna e define um novo prazo realista.',
-'QBR':'Mostra resultados, riscos e próximos passos. Termina com ações e responsáveis.',
-'CRM':'Regista contactos, histórico e tarefas logo a seguir a cada interação, para ninguém perder o contexto.',
-'Leitura':'Lê duas vezes: a primeira para o assunto, a segunda para os detalhes. Sublinha as palavras-chave.',
-'Escrita':'Escreve, deixa pousar e relê em voz alta. Confere acentos, pontuação e mas/mais.',
-'Estudo de gramática':'Aprende uma regra de cada vez e cria três frases tuas com ela.',
-'Dicionário e vocabulário':'Anota cada palavra nova com uma frase de exemplo e usa-a três vezes para ficar.',
-'Comunicação oral':'Fala devagar, articula cada sílaba e faz pausa nas vírgulas e nos pontos.',
-'Escrita profissional':'Assunto claro, frases curtas, um pedido por parágrafo e despedida formal.'
+'Sem Internet':X('Quando há ligação à rede mas não há Internet, testa por camadas, da mais simples para a mais complexa.','Cabo ou Wi-Fi: a luz está acesa?','IP: é válido (não 169.254.x.x)?','Gateway: responde ao ping?','Abre por IP mas não por nome? É o DNS.'),
+'Site não abre':X('Se só falha o nome do site, o problema costuma ser o DNS, que traduz nomes em IPs.','Abre por IP mas não por nome → DNS.','Muda o DNS e testa de novo.','Se nenhum site abre → vê o gateway e o IP.'),
+'IP 169.254.x.x':X('É um IP automático (APIPA): o PC não recebeu resposta do DHCP e deu um endereço a si próprio. Com ele não há Internet.','Verifica o cabo ou o Wi-Fi.','Reinicia o router (normalmente é o DHCP).','Renova o IP no PC (ipconfig /renew no Windows).'),
+'Um PC sem rede':X('Começa pelo físico, que é a causa mais comum, e só depois passa à configuração.','Cabo ligado nas duas pontas?','Luz da porta do switch acesa?','Outro PC nessa tomada tem rede? Se sim, o problema é do primeiro PC.'),
+'Rede lenta':X('Primeiro descobre se a lentidão é de um só dispositivo ou de todos.','Só um dispositivo: vê vírus, atualizações ou Wi-Fi fraco.','Todos: alguém está a descarregar muito ou o ISP está lento.','Compara a velocidade por cabo e por Wi-Fi.'),
+'Gateway responde':X('O gateway é o router, a saída da rede local. Se ele responde, a rede local está bem e o problema fica mais para fora.','Ping ao gateway funciona → rede local ok.','Ping a um IP externo falha → problema no ISP.','Ping ao IP funciona mas ao nome falha → DNS.'),
+'Cliente furioso':X('Um cliente zangado quer ser ouvido e ver uma solução. O gestor mantém a calma e conduz a conversa.','Ouve sem interromper.','Reconhece: «Compreendo a sua preocupação.»','Propõe ação com prazo: «Resolvemos até sexta-feira.»','Confirma depois se ficou resolvido.'),
+'Conta em risco':X('Uma conta em risco mostra sinais antes de cancelar. Quanto mais cedo agires, maior a hipótese de reter o cliente.','Sinais: menos uso, tickets sem resposta, contacto que deixou de responder.','Ação: marca uma reunião e apresenta um plano de melhoria.'),
+'Oportunidade de expansão':X('Expandir é vender mais a um cliente que já confia em ti, a partir de uma necessidade real.','Upsell: passar para um plano superior.','Cross-sell: acrescentar um serviço novo (por exemplo, suporte 24h).','Sinal: o cliente já usa quase tudo o que contratou.'),
+'SLA em risco':X('SLA é o prazo acordado com o cliente. Se vai falhar, o gestor avisa cedo e age.','Avisa o cliente antes de o prazo acabar.','Alinha com a equipa interna quem faz o quê.','Define um novo prazo realista e cumpre-o.'),
+'QBR':X('QBR é a reunião trimestral com o cliente para rever resultados e planear o futuro.','Resultados: o que foi alcançado.','Riscos: o que pode correr mal.','Próximos passos: ações, responsáveis e datas.'),
+'CRM':X('O CRM é o sistema onde se guarda tudo sobre cada cliente, para qualquer colega retomar a conversa.','Regista cada contacto logo a seguir à reunião.','Anota tarefas com data e responsável.','Consulta o histórico antes de ligar ao cliente.'),
+'Leitura':X('Ler bem é perceber o texto, não só passar os olhos. Ler duas vezes ajuda.','1.ª leitura: de que fala o texto?','2.ª leitura: sublinha palavras-chave e detalhes.','No fim, resume numa frase.'),
+'Escrita':X('Escrever com correção exige rever o texto depois de escrever.','Escreve primeiro, corrige depois.','Lê em voz alta para achar erros e falta de pontuação.','Confere: mas/mais, há/a, houve/ouve.'),
+'Estudo de gramática':X('A gramática são as regras da língua. Aprende uma de cada vez e usa-a logo.','Regra: o verbo concorda com o sujeito.','Frase tua: «Os alunos estudam.»','Cria mais duas frases com a mesma regra.'),
+'Dicionário e vocabulário':X('O vocabulário cresce quando usas as palavras novas em frases tuas.','Anota a palavra e o significado.','Escreve uma frase de exemplo: «O gestor é paciente.»','Usa a palavra três vezes durante a semana.'),
+'Comunicação oral':'<p>Comunicação oral é falar de forma clara para seres bem entendido. Depende de quatro coisas: <b style="display:inline;font:inherit;color:var(--a)">articulação</b> (dizer cada sílaba), <b style="display:inline;font:inherit;color:var(--a)">ritmo</b> (devagar, com pausas), <b style="display:inline;font:inherit;color:var(--a)">volume</b> e <b style="display:inline;font:inherit;color:var(--a)">entoação</b> (a voz sobe nas perguntas e desce no fim das afirmações).</p><ul><li><b style="display:inline;font:inherit">Articular:</b> di-zer, não «dizê»; fa-lar, não «falá».</li><li><b style="display:inline;font:inherit">Pausa:</b> «Bom dia. (pausa) O meu nome é Ana.»</li><li><b style="display:inline;font:inherit">Entoação:</b> «Vens hoje?» (voz sobe) e «Venho hoje.» (voz desce).</li><li><b style="display:inline;font:inherit">Apresentação:</b> «Bom dia a todos. Vou falar sobre… Em resumo… Obrigado pela atenção.»</li><li><b style="display:inline;font:inherit">Treino:</b> grava-te durante um minuto e ouve-te. Repete até soar natural.</li></ul>',
+'Escrita profissional':X('Um texto profissional é claro, curto e educado.','Assunto claro: «Pedido de reunião».','Frases curtas e um pedido por parágrafo.','Despedida: «Com os melhores cumprimentos».')
 };
 const V12_IMAGES={
  redes:[
