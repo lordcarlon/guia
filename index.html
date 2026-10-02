@@ -85,7 +85,7 @@ td:nth-child(2){color:var(--t)}
 .v12-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .v12-image-card{overflow:hidden;border:1px solid var(--b);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));border-radius:16px;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}
 .v12-image-card:hover{transform:translateY(-2px);border-color:var(--a);box-shadow:0 10px 28px rgba(0,0,0,.28)}
-.v12-photo{width:100%;aspect-ratio:16/9;height:auto;min-height:0;display:block;object-fit:cover;background:var(--s2);font-size:.72rem;color:var(--m)}
+.v12-photo{width:100%;height:auto;aspect-ratio:16/9;display:block;object-fit:contain;background:var(--s2);border-radius:12px;min-height:120px}
 .v12-body{padding:12px}
 .v12-cat{font:.6rem "Space Mono";letter-spacing:1.3px;color:var(--a);text-transform:uppercase}
 .v12-image-card h3{font-size:.9rem;margin:5px 0 3px}
@@ -93,16 +93,16 @@ td:nth-child(2){color:var(--t)}
 .v12-modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.88);backdrop-filter:blur(8px)}
 .v12-modal.open{display:flex}
 .v12-modal-box{width:min(920px,100%);max-height:92vh;position:relative;border:1px solid rgba(var(--rgb),.45);border-radius:18px;background:var(--s);padding:10px;box-shadow:0 20px 70px rgba(0,0,0,.55)}
-.v12-modal-img{width:100%;height:auto;max-height:70vh;object-fit:contain;border-radius:12px;display:block;background:#050505}
+.v12-modal-img{width:100%;max-height:78vh;object-fit:contain;border-radius:12px;display:block;background:#050505}
 .v12-modal-caption{padding:9px 4px 2px;text-align:center;color:var(--t);font-size:.8rem}
 .v12-close{position:absolute;right:16px;top:16px;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.7);color:#fff;font-size:1.1rem;cursor:pointer;z-index:2}
-.v12-modal-box{overflow:auto}.v12-modal-img{max-height:70vh}
+.v12-modal-box{overflow:auto;max-height:92vh}.v12-modal-img{max-height:70vh;height:auto;object-fit:contain}
 .v12-modal-extra{margin:10px 2px 4px;padding:12px;border-left:3px solid var(--a);border-radius:0 10px 10px 0;background:rgba(var(--rgb),.08);color:var(--t);font-size:.86rem;line-height:1.55}
 .v12-modal-extra p{margin:0 0 8px}.v12-modal-extra ul{margin:0 0 0 18px;padding:0}.v12-modal-extra li{margin-bottom:5px}
 .v12-modal-extra b{display:block;font:.62rem "Space Mono";letter-spacing:1.4px;color:var(--a);margin-bottom:4px}
 .v12-more{display:inline-block;margin-top:7px;font:.62rem "Space Mono";color:var(--a)}
 .v12-note{margin-top:12px;padding:11px 12px;border-left:3px solid var(--a);border-radius:0 10px 10px 0;background:rgba(var(--rgb),.05);color:var(--m);font-size:.72rem;line-height:1.5}
-@media(max-width:520px){.v12-grid{grid-template-columns:1fr}.v12-photo{aspect-ratio:16/10}.v12-head{align-items:flex-start;flex-direction:column}}
+@media(max-width:520px){.v12-grid{grid-template-columns:1fr}.v12-photo{aspect-ratio:16/10;min-height:0}.v12-head{align-items:flex-start;flex-direction:column}}
 
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
@@ -163,32 +163,11 @@ td:nth-child(2){color:var(--t)}
 
 </style>
 
-<!-- V12_ONLINE_IMAGES -->
+<!-- V14_LOCAL_IMAGES -->
 <script>
-/*
- V13: imagens carregadas diretamente da Internet.
- Não é necessária a criação de uma pasta images/.
-*/
-window.V13_IMAGE_MODE = "online";
-
-/* Fallback local (SVG embutido): mesmo sem Internet, o cartão continua visível. */
-window.V13_IMAGE_FALLBACK = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">' +
-  '<defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#07100d"/><stop offset="1" stop-color="#10261d"/></linearGradient></defs>' +
-  '<rect width="1200" height="675" fill="url(#g)"/>' +
-  '<circle cx="600" cy="285" r="82" fill="none" stroke="#39d99a" stroke-width="10" opacity=".75"/>' +
-  '<path d="M550 285l35 35 70-80" fill="none" stroke="#39d99a" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>' +
-  '<text x="600" y="455" text-anchor="middle" fill="#d8fff0" font-family="Arial,sans-serif" font-size="42">Imagem indisponível</text>' +
-  '<text x="600" y="505" text-anchor="middle" fill="#8bb9a7" font-family="Arial,sans-serif" font-size="25">Verifica a ligação à Internet e tenta novamente</text>' +
-  '</svg>'
-);
-
-function v13ImageError(img){
-  if(!img || img.dataset.fallbackApplied==='1') return;
-  img.dataset.fallbackApplied='1';
-  img.src=window.V13_IMAGE_FALLBACK;
-  img.removeAttribute('srcset');
-}
+/* Todas as imagens do setor visual são ficheiros locais do próprio PWA. */
+window.V13_IMAGE_MODE = "local";
+window.V13_IMAGE_FALLBACK = "images/redes-sem-internet.svg";
 </script>
 
 </head>
@@ -487,48 +466,38 @@ const V12_EXTRA={
 };
 const V12_IMAGES={
  redes:[
-  {t:'Sem Internet',cat:'Diagnóstico de Redes',u:'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=85',d:'Infraestrutura e equipamentos numa situação de diagnóstico.'},
-  {t:'Site não abre',cat:'DNS / Web',u:'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=85',d:'Computador preparado para testar conectividade e resolução de nomes.'},
-  {t:'IP 169.254.x.x',cat:'DHCP / IPv4',u:'https://images.unsplash.com/photo-1551808525-51a94da548ce?auto=format&fit=crop&w=1200&q=85',d:'Estação de trabalho usada para análise de configuração de rede.'},
-  {t:'Um PC sem rede',cat:'LAN / Switch',u:'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?auto=format&fit=crop&w=1200&q=85',d:'Posto de trabalho e periféricos num ambiente de escritório.'},
-  {t:'Rede lenta',cat:'Desempenho',u:'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=85',d:'Ambiente colaborativo para investigar desempenho e utilização.'},
-  {t:'Gateway responde',cat:'Roteamento / ISP',u:'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=85',d:'Equipamento de infraestrutura associado à saída da rede.'}
+  {t:'Sem Internet',cat:'Diagnóstico de Redes',u:'images/redes-sem-internet.svg',d:'Infraestrutura e equipamentos numa situação de diagnóstico.'},
+  {t:'Site não abre',cat:'DNS / Web',u:'images/redes-site-n-o-abre.svg',d:'Computador preparado para testar conectividade e resolução de nomes.'},
+  {t:'IP 169.254.x.x',cat:'DHCP / IPv4',u:'images/redes-ip-169-254-x-x.svg',d:'Estação de trabalho usada para análise de configuração de rede.'},
+  {t:'Um PC sem rede',cat:'LAN / Switch',u:'images/redes-um-pc-sem-rede.svg',d:'Posto de trabalho e periféricos num ambiente de escritório.'},
+  {t:'Rede lenta',cat:'Desempenho',u:'images/redes-rede-lenta.svg',d:'Ambiente colaborativo para investigar desempenho e utilização.'},
+  {t:'Gateway responde',cat:'Roteamento / ISP',u:'images/redes-gateway-responde.svg',d:'Equipamento de infraestrutura associado à saída da rede.'}
  ],
  gestao:[
-  {t:'Cliente furioso',cat:'Atendimento',u:'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=85',d:'Reunião profissional para ouvir, compreender e alinhar uma solução.'},
-  {t:'Conta em risco',cat:'Retenção',u:'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=85',d:'Ambiente de trabalho para análise de contas e acompanhamento.'},
-  {t:'Oportunidade de expansão',cat:'Upsell / Cross-sell',u:'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1200&q=85',d:'Equipa a discutir necessidades e oportunidades de negócio.'},
-  {t:'SLA em risco',cat:'SLA / Operações',u:'https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=85',d:'Coordenação interna para acompanhar prazos e responsabilidades.'},
-  {t:'QBR',cat:'Business Review',u:'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1200&q=85',d:'Reunião de resultados, métricas, riscos e próximos passos.'},
-  {t:'CRM',cat:'Gestão de Conta',u:'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=85',d:'Equipa a trabalhar com informação de clientes e processos.'}
+  {t:'Cliente furioso',cat:'Atendimento',u:'images/gestao-cliente-furioso.svg',d:'Reunião profissional para ouvir, compreender e alinhar uma solução.'},
+  {t:'Conta em risco',cat:'Retenção',u:'images/gestao-conta-em-risco.svg',d:'Ambiente de trabalho para análise de contas e acompanhamento.'},
+  {t:'Oportunidade de expansão',cat:'Upsell / Cross-sell',u:'images/gestao-oportunidade-de-expans-o.svg',d:'Equipa a discutir necessidades e oportunidades de negócio.'},
+  {t:'SLA em risco',cat:'SLA / Operações',u:'images/gestao-sla-em-risco.svg',d:'Coordenação interna para acompanhar prazos e responsabilidades.'},
+  {t:'QBR',cat:'Business Review',u:'images/gestao-qbr.svg',d:'Reunião de resultados, métricas, riscos e próximos passos.'},
+  {t:'CRM',cat:'Gestão de Conta',u:'images/gestao-crm.svg',d:'Equipa a trabalhar com informação de clientes e processos.'}
  ]
 ,
 portugues:[
-  {t:'Leitura',cat:'Compreensão',u:'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=1200&q=85',d:'Leitura atenta para desenvolver vocabulário, fluência e interpretação.'},
-  {t:'Escrita',cat:'Ortografia',u:'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=85',d:'Prática de escrita e revisão para melhorar clareza e correção.'},
-  {t:'Estudo de gramática',cat:'Gramática',u:'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=85',d:'Material de estudo para consolidar regras e estruturas da língua.'},
-  {t:'Dicionário e vocabulário',cat:'Vocabulário',u:'https://images.unsplash.com/photo-1524578271613-d550eacf6090?auto=format&fit=crop&w=1200&q=85',d:'Consulta de palavras, significados e uso no contexto.'},
-  {t:'Comunicação oral',cat:'Pronúncia',u:'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1200&q=85',d:'Treino de comunicação, articulação e apresentação oral.'},
-  {t:'Escrita profissional',cat:'Comunicação',u:'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?auto=format&fit=crop&w=1200&q=85',d:'Contexto profissional para emails, relatórios e comunicação clara.'}
+  {t:'Leitura',cat:'Compreensão',u:'images/portugues-leitura.svg',d:'Leitura atenta para desenvolver vocabulário, fluência e interpretação.'},
+  {t:'Escrita',cat:'Ortografia',u:'images/escrita.jpg',d:'Prática de escrita e revisão para melhorar clareza e correção.'},
+  {t:'Estudo de gramática',cat:'Gramática',u:'images/gramatica.jpg',d:'Material de estudo para consolidar regras e estruturas da língua.'},
+  {t:'Dicionário e vocabulário',cat:'Vocabulário',u:'images/vocab.jpg',d:'Consulta de palavras, significados e uso no contexto.'},
+  {t:'Comunicação oral',cat:'Pronúncia',u:'images/portugues-comunica-o-oral.svg',d:'Treino de comunicação, articulação e apresentação oral.'},
+  {t:'Escrita profissional',cat:'Comunicação',u:'images/portugues-escrita-profissional.svg',d:'Contexto profissional para emails, relatórios e comunicação clara.'}
 ]
 };
-function v13PreloadImages(){
- const items=V12_IMAGES[state.area]||[];
- items.forEach(x=>{
-  const im=new Image();
-  im.decoding='async';
-  im.referrerPolicy='no-referrer';
-  im.src=x.u;
- });
-}
 function v12HTML(){
  const a=state.area,items=V12_IMAGES[a],label=a==='redes'?'🌐 Redes':a==='gestao'?'💼 Gestão de Contas':'🇵🇹 Língua Portuguesa';
- v13PreloadImages();
- return `<section class="v12 card" id="v12" data-tab="v12"><div class="v12-head"><div><div class="v12-kick">V13 · SETOR DE IMAGENS</div><h2 class="v12-title">Biblioteca visual · ${label}</h2><p class="v12-sub">Imagens de referência para associar cada situação prática a um contexto visual. Toca numa imagem para ampliar e ver o que está por trás dela.</p></div><div class="v11-score">${items.length} imagens</div></div><div class="v12-grid">${items.map((x,i)=>`<article class="v12-image-card" tabindex="0" data-v12img="${i}"><img class="v12-photo" src="${x.u}" alt="${x.t}" loading="eager" decoding="async" referrerpolicy="no-referrer" onerror="v13ImageError(this)"><div class="v12-body"><div class="v12-cat">${x.cat}</div><h3>${i+1}. ${x.t}</h3><p>${x.d}</p><span class="v12-more">➕ Toca para ver mais</span></div></article>`).join('')}</div><div class="v12-note">As imagens são carregadas online na primeira utilização e podem ficar disponíveis no cache do PWA depois disso.</div><div class="v12-modal" id="v12-modal" aria-hidden="true"><div class="v12-modal-box"><button class="v12-close" type="button" aria-label="Fechar imagem">×</button><img class="v12-modal-img" id="v12-modal-img" alt=""><div class="v12-modal-caption" id="v12-modal-caption"></div><div class="v12-modal-extra" id="v12-modal-extra"></div></div></div></section>`;
+ return `<section class="v12 card" id="v12" data-tab="v12"><div class="v12-head"><div><div class="v12-kick">V13 · SETOR DE IMAGENS</div><h2 class="v12-title">Biblioteca visual · ${label}</h2><p class="v12-sub">Imagens de referência para associar cada situação prática a um contexto visual. Toca numa imagem para ampliar e ver o que está por trás dela.</p></div><div class="v11-score">${items.length} imagens</div></div><div class="v12-grid">${items.map((x,i)=>`<article class="v12-image-card" tabindex="0" data-v12img="${i}"><img class="v12-photo" src="${x.u}" alt="${x.t}" loading="eager" decoding="async" onerror="this.onerror=null;this.src=V13_IMAGE_FALLBACK"><div class="v12-body"><div class="v12-cat">${x.cat}</div><h3>${i+1}. ${x.t}</h3><p>${x.d}</p><span class="v12-more">➕ Toca para ver mais</span></div></article>`).join('')}</div><div class="v12-note">As imagens estão incorporadas no próprio PWA e funcionam sem depender de servidores externos.</div><div class="v12-modal" id="v12-modal" aria-hidden="true"><div class="v12-modal-box"><button class="v12-close" type="button" aria-label="Fechar imagem">×</button><img class="v12-modal-img" id="v12-modal-img" alt=""><div class="v12-modal-caption" id="v12-modal-caption"></div><div class="v12-modal-extra" id="v12-modal-extra"></div></div></div></section>`;
 }
 function v12Open(i){
  const x=V12_IMAGES[state.area][i],m=document.getElementById('v12-modal');if(!x||!m)return;
- const im=document.getElementById('v12-modal-img');im.dataset.fallbackApplied='0';im.onerror=()=>v13ImageError(im);im.src=x.u;im.alt=x.t;document.getElementById('v12-modal-caption').textContent=x.t+' · '+x.cat;document.getElementById('v12-modal-extra').innerHTML='<b>💡 POR TRÁS DA IMAGEM</b>'+(V12_EXTRA[x.t]||'<p>'+x.d+'</p>');m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+ const im=document.getElementById('v12-modal-img');im.onerror=function(){this.onerror=null;this.src=V13_IMAGE_FALLBACK};im.src=x.u;im.alt=x.t;document.getElementById('v12-modal-caption').textContent=x.t+' · '+x.cat;document.getElementById('v12-modal-extra').innerHTML='<b>💡 POR TRÁS DA IMAGEM</b>'+(V12_EXTRA[x.t]||'<p>'+x.d+'</p>');m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
 }
 function v12Close(){const m=document.getElementById('v12-modal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true');document.body.style.overflow='';}
 
