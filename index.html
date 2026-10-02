@@ -465,6 +465,7 @@ const V12_EXTRA={
 'Estudo de gramática':X('A gramática são as regras da língua. Aprende uma de cada vez e usa-a logo.','Regra: o verbo concorda com o sujeito.','Frase tua: «Os alunos estudam.»','Cria mais duas frases com a mesma regra.'),
 'Dicionário e vocabulário':X('O vocabulário cresce quando usas as palavras novas em frases tuas.','Anota a palavra e o significado.','Escreve uma frase de exemplo: «O gestor é paciente.»','Usa a palavra três vezes durante a semana.'),
 'Comunicação oral':'<p>Comunicação oral é falar de forma clara para seres bem entendido. Depende de quatro coisas: <b style="display:inline;font:inherit;color:var(--a)">articulação</b> (dizer cada sílaba), <b style="display:inline;font:inherit;color:var(--a)">ritmo</b> (devagar, com pausas), <b style="display:inline;font:inherit;color:var(--a)">volume</b> e <b style="display:inline;font:inherit;color:var(--a)">entoação</b> (a voz sobe nas perguntas e desce no fim das afirmações).</p><ul><li><b style="display:inline;font:inherit">Articular:</b> di-zer, não «dizê»; fa-lar, não «falá».</li><li><b style="display:inline;font:inherit">Pausa:</b> «Bom dia. (pausa) O meu nome é Ana.»</li><li><b style="display:inline;font:inherit">Entoação:</b> «Vens hoje?» (voz sobe) e «Venho hoje.» (voz desce).</li><li><b style="display:inline;font:inherit">Apresentação:</b> «Bom dia a todos. Vou falar sobre… Em resumo… Obrigado pela atenção.»</li><li><b style="display:inline;font:inherit">Treino:</b> grava-te durante um minuto e ouve-te. Repete até soar natural.</li></ul>',
+'Comunicação oral':X('Falar bem é treino: contam o que dizes e como dizes. Fala devagar, com pausas, e acaba cada ideia antes de passar à seguinte.','Respira antes de começar e fala mais devagar do que achas necessário.','Faz pausas curtas onde a escrita teria vírgulas e pontos.','Articula o fim das palavras: di·zer, não dizê.','Grava-te e ouve: é a forma mais rápida de ver o que melhorar.'),
 'Escrita profissional':X('Um texto profissional é claro, curto e educado.','Assunto claro: «Pedido de reunião».','Frases curtas e um pedido por parágrafo.','Despedida: «Com os melhores cumprimentos».')
 };
 const V12_IMAGES={
@@ -500,7 +501,7 @@ function v12HTML(){
 }
 function v12Open(i){
  const x=V12_IMAGES[state.area][i],m=document.getElementById('v12-modal');if(!x||!m)return;
- const im=document.getElementById('v12-modal-img');im.src=x.u;im.alt=x.t;document.getElementById('v12-modal-caption').textContent=x.t+' · '+x.cat;document.getElementById('v12-modal-extra').innerHTML=V12_EXTRA[x.t]?'<b>💡 POR TRÁS DA IMAGEM</b>'+V12_EXTRA[x.t]:x.d;m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+ const im=document.getElementById('v12-modal-img');im.src=x.u;im.alt=x.t;document.getElementById('v12-modal-caption').textContent=x.t+' · '+x.cat;document.getElementById('v12-modal-extra').innerHTML='<b>💡 POR TRÁS DA IMAGEM</b>'+(V12_EXTRA[x.t]||'<p>'+x.d+'</p>');m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
 }
 function v12Close(){const m=document.getElementById('v12-modal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true');document.body.style.overflow='';}
 
