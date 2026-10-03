@@ -1064,6 +1064,21 @@ window.addEventListener('resize',updateBar);window.addEventListener('keydown',e=
 renderApp();
 document.addEventListener('click',e=>{const m=document.querySelector('.v12-modal.open');if(m&&(e.target.closest('.v12-close')||e.target===m))v12Close()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')v12Close()});
+(function(){
+ const h=document.querySelector('header');if(!h)return;
+ const p=document.createElement('p');p.id='offst';p.style.cssText='font-size:.72rem;color:var(--m);margin-top:10px';p.textContent='⏳ A preparar o modo offline…';h.appendChild(p);
+ const set=(t)=>{p.textContent=t};
+ if(!('serviceWorker' in navigator)||!location.protocol.startsWith('http')){set('⚠️ Modo offline indisponível neste endereço');return}
+ navigator.serviceWorker.ready.then(async()=>{
+  try{const ks=(await caches.keys()).filter(k=>k.startsWith('guia-'));let ok=false;
+   for(const k of ks){const c=await caches.open(k);if(await c.match('./index.html')||await c.match('index.html'))ok=true}
+   set(ok?'✅ Modo offline pronto':'⚠️ Offline ainda não guardado: mantém a internet ligada e recarrega')}
+  catch(e){set('⚠️ Não foi possível verificar o modo offline')}
+ });
+ if(!navigator.onLine)set('📴 Sem internet: a usar a cópia guardada');
+ window.addEventListener('offline',()=>set('📴 Sem internet: a usar a cópia guardada'));
+ window.addEventListener('online',()=>set('✅ Online · modo offline pronto'));
+})();
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>
 </body>
