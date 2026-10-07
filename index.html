@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Guia de Estudo · V13</title>
+<title>Guia de Estudo · V24</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#07090f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -175,6 +175,13 @@ td:nth-child(2){color:var(--t)}
 .v11{margin:18px 0 28px}.v11-head{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:12px}.v11-kick{font:.65rem "Space Mono";letter-spacing:1.5px;color:var(--a)}.v11-title{margin:3px 0;font-size:1.2rem}.v11-score{font:.72rem "Space Mono";white-space:nowrap}.v11-grid{display:grid;gap:12px}.v11-card{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.015));border-radius:16px;padding:16px}.v11-card h3{margin:0 0 7px;font-size:1rem}.v11-card .scenario{color:#cbd3df;line-height:1.65;font-size:.86rem;margin-bottom:12px}.v11-opts{display:grid;gap:8px}.v11-opt{width:100%;text-align:left;border:1px solid var(--line);background:#0d1118;color:#e8edf5;border-radius:11px;padding:11px 12px;cursor:pointer;font:inherit;font-size:.82rem;line-height:1.45}.v11-opt:hover{border-color:var(--a)}.v11-opt.correct{border-color:#38d996;background:rgba(56,217,150,.08)}.v11-opt.wrong{border-color:#ff6674;background:rgba(255,102,116,.07)}.v11-feedback{display:none;margin-top:11px;padding:11px 12px;border-left:3px solid var(--a);background:rgba(255,255,255,.025);font-size:.82rem;line-height:1.6;color:#d7dee9}.v11-feedback.open{display:block}.v11-mini{font:.65rem "Space Mono";color:#8f9bab;margin-top:8px}.v11-reset{margin-top:12px}.v11-done{border-color:var(--a)}
 @media(min-width:720px){.v11-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:430px){.v11-head{align-items:start;flex-direction:column}.v11-score{white-space:normal}}
+
+
+/* ===== V24 · SISTEMA DE APRENDIZAGEM PROFISSIONAL ===== */
+.lh{background:var(--s);border:1px solid var(--b);border-top:2px solid var(--a);border-radius:16px;padding:16px;margin:0 0 18px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.lh-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.lh-k{font:.64rem "Space Mono";letter-spacing:1.8px;color:var(--a)}.lh h2{margin:4px 0;font-size:1.12rem}.lh-sub{color:var(--m);font-size:.82rem}.lh-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}.lh-stat{padding:10px;border:1px solid var(--b);border-radius:11px;background:var(--s2)}.lh-stat small{display:block;color:var(--m);font-size:.65rem}.lh-stat b{display:block;margin-top:3px;color:var(--a);font:.9rem "Space Mono"}.lh-actions{display:flex;gap:8px;flex-wrap:wrap}.lh-btn{padding:9px 11px;border-radius:10px;border:1px solid rgba(var(--rgb),.38);background:rgba(var(--rgb),.07);color:var(--a);font:.67rem "Space Mono";cursor:pointer}.lh-btn.primary{background:rgba(var(--rgb),.16);border-color:var(--a)}.lh-cycle{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:12px}.lh-step{padding:7px 4px;border:1px solid var(--b);border-radius:8px;text-align:center;color:var(--m);font-size:.61rem}.lh-step.on{border-color:rgba(var(--rgb),.5);color:var(--a);background:rgba(var(--rgb),.06)}.lh-dict{margin-top:12px;padding:13px;border:1px solid var(--b);border-radius:12px;background:var(--s2)}.lh-dict b{color:var(--a)}.lh-dict p{margin:4px 0;color:var(--t);font-size:.86rem}.lh-dict small{color:var(--m)}.lh-note{margin-top:10px;color:var(--m);font-size:.72rem}.lh-list{display:grid;gap:7px;margin-top:10px}.lh-item{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:9px 10px;border:1px solid var(--b);border-radius:9px;background:var(--s2)}.lh-item span{color:var(--m);font-size:.72rem}.lh-item b{font-size:.76rem}.lh-warn{color:#fbbf24}.lh-good{color:var(--g)}
+@media(max-width:650px){.lh-grid{grid-template-columns:repeat(2,1fr)}.lh-cycle{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:400px){.lh{padding:13px}.lh-cycle{grid-template-columns:repeat(2,1fr)}}
 
 </style>
 
@@ -642,9 +649,44 @@ function v12Open(i){
 }
 function v12Close(){document.querySelectorAll('.v12-modal').forEach(m=>{m.classList.remove('open');m.setAttribute('aria-hidden','true')});document.body.style.overflow='';}
 
+
+/* ===== V24 · HUB DE APRENDIZAGEM ===== */
+const LH_KEY='guia_aprendizagem_v24';
+let lhState=JSON.parse(localStorage.getItem(LH_KEY)||'null')||{dictDay:'',dictIndex:0,dictLearned:[],reviews:[]};
+function lhSave(){localStorage.setItem(LH_KEY,JSON.stringify(lhState))}
+const LH_DICT=[
+ ['Protocolo','Conjunto de regras que permite a comunicação compatível entre dispositivos.','Um protocolo define como os dados devem ser enviados e interpretados.'],
+ ['Gateway','Dispositivo ou função que encaminha o tráfego para outra rede.','Num computador, o gateway padrão costuma ser o próximo ponto para sair da rede local.'],
+ ['DNS','Sistema que relaciona nomes de domínio com endereços IP.','Quando escreves um domínio, o DNS ajuda a descobrir o endereço correspondente.'],
+ ['DHCP','Serviço que pode atribuir automaticamente configurações de rede aos dispositivos.','Um PC pode receber IP, máscara e gateway através do DHCP.'],
+ ['CRM','Sistema/processo usado para gerir o relacionamento e informação dos clientes.','O CRM ajuda a organizar histórico, oportunidades e interações.'],
+ ['SLA','Acordo que define níveis de serviço esperados entre as partes.','Pode estabelecer metas de atendimento ou resolução.'],
+ ['Churn','Perda de clientes ou receita, conforme a métrica utilizada.','Acompanhar churn ajuda a identificar problemas de retenção.'],
+ ['Onboarding','Processo inicial de integração de um cliente ao serviço.','Um bom onboarding reduz dúvidas e acelera a adoção.'],
+ ['Concordância','Relação gramatical entre palavras que devem combinar em género e/ou número.','Em “as aulas completas”, artigo, nome e adjetivo concordam.'],
+ ['Coesão','Ligação linguística entre partes de um texto.','Conectores e referências ajudam a ligar frases e ideias.']
+];
+function lhDayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function lhDaily(){const day=lhDayKey();if(lhState.dictDay!==day){let seed=0;for(let i=0;i<day.length;i++)seed=(seed*31+day.charCodeAt(i))>>>0;lhState.dictIndex=seed%LH_DICT.length;lhState.dictDay=day;lhSave()}return LH_DICT[lhState.dictIndex]}
+function lhAccuracy(){return state.nAns?Math.round(state.ok.length/state.nAns*100):0}
+function lhTotalDone(){return completedTotal()}
+function lhWeak(){return (state.wrong||[]).length}
+function lhNext(){const d=studyData[state.area],done=state.done[state.area]||[];const i=d.lessons.findIndex((_,k)=>!done.includes(k+1));return i<0?d.lessons.length-1:i}
+function lhRecommend(){if(lhWeak()>0)return ['Revisão prioritária','Tens '+lhWeak()+' erro(s) registado(s). Revê antes de avançar.','v2-review'];const i=lhNext();return ['Próxima aula',studyData[state.area].lessons[i].title,'lesson-'+pad(i+1)]}
+function lhHub(){const d=studyData[state.area],idx=lhNext(),word=lhDaily(),rec=lhRecommend(),pct=percent(),acc=lhAccuracy(),done=lhTotalDone(),total=totalLessons();
+ return `<section class="lh" id="learning-hub"><div class="lh-head"><div><div class="lh-k">// SISTEMA DE APRENDIZAGEM · V24</div><h2>Centro de Aprendizagem</h2><div class="lh-sub">Estudar → compreender → aplicar → verificar → rever → dominar.</div></div><span class="num">${pct}%</span></div>
+ <div class="lh-grid"><div class="lh-stat"><small>Aulas concluídas</small><b>${done}/${total}</b></div><div class="lh-stat"><small>Precisão</small><b>${acc}%</b></div><div class="lh-stat"><small>XP</small><b>${state.xp}</b></div><div class="lh-stat"><small>Erros para rever</small><b class="${lhWeak()?'lh-warn':'lh-good'}">${lhWeak()}</b></div></div>
+ <div class="lh-cycle">${['Objetivo','Explicação','Exemplo','Aplicação','Verificação','Revisão'].map((x,i)=>`<div class="lh-step ${i===0?'on':''}">${i+1}. ${x}</div>`).join('')}</div>
+ <div class="lh-dict"><b>📖 Palavra do dia · ${word[0]}</b><p>${word[1]}</p><small>Exemplo: ${word[2]}</small></div>
+ <div class="lh-list"><div class="lh-item"><div><span>RECOMENDAÇÃO</span><br><b>${rec[0]} · ${rec[1]}</b></div><button class="lh-btn primary" data-lh-jump="${rec[2]}">Começar →</button></div><div class="lh-item"><div><span>PRÓXIMA AULA · ${d.kicker}</span><br><b>${d.lessons[idx].title}</b></div><button class="lh-btn" data-lh-jump="lesson-${pad(idx+1)}">Estudar</button></div></div>
+ <div class="lh-actions" style="margin-top:10px"><button class="lh-btn" data-lh-dict>✓ Marcar palavra como aprendida</button><button class="lh-btn" data-lh-refresh>↻ Outra palavra</button><button class="lh-btn" data-lh-jump="v2-progress">🎯 Ver progresso</button></div><div class="lh-note">O dicionário usa uma seleção determinística por dia: reiniciar a aplicação não muda a palavra do dia.</div></section>`}
+function lhRefresh(){let day=lhDayKey();lhState.dictIndex=(lhState.dictIndex+1)%LH_DICT.length;lhState.dictDay=day;lhSave();renderApp()}
+function lhDictLearn(){const w=lhDaily()[0];if(!lhState.dictLearned.includes(w))lhState.dictLearned.push(w);lhSave();renderApp()}
+function lhJump(id){const el=document.getElementById(id);if(!el)return;el.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>{if(el.classList.contains('card'))setOpen(el,true)},100)}
+
 function renderLessons(d){
   const aDone=state.done[state.area].length,aTot=d.lessons.length,aPct=Math.round(aDone/aTot*100);
-  let h=`<div class="studybar">
+  let h=lhHub()+`<div class="studybar">
     <div class="studytop"><span class="studytitle">PROGRESSO · ${d.kicker}</span><span class="studyxp">${state.xp} XP · Nível ${level()}</span></div>
     <div class="progressbar"><i style="width:${aPct}%"></i></div>
     <div class="studytop" style="margin-top:7px;margin-bottom:0"><span class="studyxp">${aDone}/${aTot} aulas concluídas</span><span class="studyxp">${aPct}%</span></div>
@@ -1081,6 +1123,10 @@ function switchSection(k){if(k!==state.area){state.area=k;persist();renderApp()}
 document.querySelector('.seg').addEventListener('click',e=>{const b=e.target.closest('button');b&&switchSection(b.dataset.k)});
 tabs.addEventListener('click',e=>{const p=e.target.closest('.pill');p&&scrollToLesson(p.dataset.target)});
 app.addEventListener('click',e=>{
+  const lh=e.target.closest('[data-lh-jump]');if(lh){lhJump(lh.dataset.lhJump);return}
+  if(e.target.closest('[data-lh-refresh]')){lhRefresh();return}
+  if(e.target.closest('[data-lh-dict]')){lhDictLearn();return}
+
   const cb=e.target.closest('[data-case-toggle]');
   if(cb){
     const panel=document.getElementById(cb.dataset.caseToggle);
