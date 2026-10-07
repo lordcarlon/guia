@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Guia de Estudo · V13</title>
+<title>Guia de Estudo · V22</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#07090f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -161,6 +161,40 @@ td:nth-child(2){color:var(--t)}
 .v11{margin:18px 0 28px}.v11-head{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:12px}.v11-kick{font:.65rem "Space Mono";letter-spacing:1.5px;color:var(--a)}.v11-title{margin:3px 0;font-size:1.2rem}.v11-score{font:.72rem "Space Mono";white-space:nowrap}.v11-grid{display:grid;gap:12px}.v11-card{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.015));border-radius:16px;padding:16px}.v11-card h3{margin:0 0 7px;font-size:1rem}.v11-card .scenario{color:#cbd3df;line-height:1.65;font-size:.86rem;margin-bottom:12px}.v11-opts{display:grid;gap:8px}.v11-opt{width:100%;text-align:left;border:1px solid var(--line);background:#0d1118;color:#e8edf5;border-radius:11px;padding:11px 12px;cursor:pointer;font:inherit;font-size:.82rem;line-height:1.45}.v11-opt:hover{border-color:var(--a)}.v11-opt.correct{border-color:#38d996;background:rgba(56,217,150,.08)}.v11-opt.wrong{border-color:#ff6674;background:rgba(255,102,116,.07)}.v11-feedback{display:none;margin-top:11px;padding:11px 12px;border-left:3px solid var(--a);background:rgba(255,255,255,.025);font-size:.82rem;line-height:1.6;color:#d7dee9}.v11-feedback.open{display:block}.v11-mini{font:.65rem "Space Mono";color:#8f9bab;margin-top:8px}.v11-reset{margin-top:12px}.v11-done{border-color:var(--a)}
 @media(min-width:720px){.v11-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:430px){.v11-head{align-items:start;flex-direction:column}.v11-score{white-space:normal}}
+
+
+/* ===== V22 · MODO LIVRO + DICIONÁRIO DIÁRIO ===== */
+.book-panel{margin-top:12px;padding:16px;border:1px solid rgba(var(--rgb),.35);border-radius:14px;background:linear-gradient(180deg,rgba(var(--rgb),.055),rgba(255,255,255,.015));}
+.book-kicker{font:.64rem "Space Mono";letter-spacing:1.5px;color:var(--a);margin-bottom:6px}
+.book-panel h3{font-size:1.02rem;margin:0 0 8px}
+.book-panel p{color:#d1d8e3;font-size:.87rem;line-height:1.78;margin:0 0 11px}
+.book-block{padding:12px 13px;margin-top:10px;border-left:3px solid var(--a);background:rgba(var(--rgb),.045);border-radius:0 11px 11px 0}
+.book-block b{display:block;color:var(--a);font:.65rem "Space Mono";letter-spacing:1px;margin-bottom:5px}
+.book-steps{margin:8px 0 0 19px;color:#d1d8e3;font-size:.85rem;line-height:1.75}
+.book-steps li{margin-bottom:4px}
+.book-question{padding:12px 13px;margin-top:11px;border:1px dashed rgba(var(--rgb),.4);border-radius:11px;background:rgba(var(--rgb),.035)}
+.book-question strong{display:block;color:var(--a);font-size:.84rem;margin-bottom:6px}
+.book-answer{margin-top:8px;border:1px solid var(--b);border-radius:10px;background:var(--s2);padding:9px 11px}
+.book-answer summary{cursor:pointer;color:var(--a);font:.7rem "Space Mono";padding:2px}
+.book-answer p{margin:9px 0 0;font-size:.84rem}
+.daily-dict{margin:0 0 20px;background:var(--s);border:1px solid var(--b);border-top:2px solid var(--a);border-radius:16px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.daily-dict-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.daily-dict-kicker{font:.64rem "Space Mono";letter-spacing:1.6px;color:var(--a)}
+.daily-dict h2{margin:4px 0;font-size:1.08rem}
+.daily-dict-date{color:var(--m);font-size:.76rem}
+.daily-dict-intro{color:var(--m);font-size:.8rem;line-height:1.55;margin:7px 0 12px}
+.daily-words{display:grid;gap:9px}
+.word-card{padding:12px;border:1px solid var(--b);border-radius:12px;background:var(--s2)}
+.word-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.word-card h3{font-size:.98rem;margin:0;color:var(--a)}
+.word-type{font:.62rem "Space Mono";color:var(--m);padding:3px 7px;border:1px solid var(--b);border-radius:99px}
+.word-meaning{font-size:.83rem;color:var(--t);line-height:1.55;margin-top:6px}
+.word-example{font-size:.78rem;color:var(--m);line-height:1.55;margin-top:6px}
+.word-example b{color:var(--a)}
+.dict-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
+.dict-btn{padding:9px 12px;border-radius:10px;border:1px solid rgba(var(--rgb),.35);background:rgba(var(--rgb),.07);color:var(--a);font:.68rem "Space Mono";cursor:pointer}
+.dict-source{font-size:.68rem;color:var(--m);margin-top:10px;line-height:1.5}
+@media(max-width:520px){.daily-dict-head{flex-direction:column}.daily-dict{padding:14px}}
 
 </style>
 
@@ -370,6 +404,102 @@ const TIP={
 };
 const norm=s=>s.replace(/^[^\p{L}\p{N}]+/u,'').split(':')[0].trim().toLowerCase();
 
+
+/* ===== V22 · DICIONÁRIO DIÁRIO =====
+   A seleção é determinística por data: muda automaticamente a cada dia.
+   A ordem das palavras é baralhada por um gerador simples para não ficar sempre igual.
+*/
+const DAILY_WORDS=[
+["abrupto","adjetivo","Que acontece de forma súbita, inesperada ou brusca.","A mudança foi abrupta e apanhou a equipa de surpresa."],
+["acessível","adjetivo","Que pode ser alcançado, compreendido ou utilizado com facilidade.","O professor explicou o conceito de forma acessível."],
+["adversidade","nome","Situação difícil ou desfavorável que exige capacidade de enfrentar problemas.","Mesmo diante da adversidade, continuou a estudar."],
+["aludir","verbo","Fazer referência a algo sem o mencionar diretamente.","O autor aludiu ao problema sem o descrever em detalhe."],
+["ambíguo","adjetivo","Que pode ser entendido de mais de uma maneira.","A frase ficou ambígua porque não indicava quem realizou a ação."],
+["aprimorar","verbo","Tornar melhor; aperfeiçoar.","Quero aprimorar a minha escrita praticando todos os dias."],
+["assertivo","adjetivo","Que exprime uma ideia de forma clara, firme e adequada, sem agressividade.","Foi assertivo ao explicar o problema ao cliente."],
+["coerente","adjetivo","Que apresenta ligação lógica entre as suas partes.","O relatório é coerente: cada conclusão é sustentada pelo que foi apresentado."],
+["conciso","adjetivo","Que exprime muito com poucas palavras, sem perder o essencial.","A resposta foi concisa e resolveu a dúvida."],
+["contexto","nome","Conjunto de circunstâncias e informações que ajudam a compreender algo.","Sem conhecer o contexto, a frase pode parecer ambígua."],
+["contundente","adjetivo","Que produz efeito forte ou que é muito claro e decisivo.","Apresentou um argumento contundente durante a reunião."],
+["criterioso","adjetivo","Que analisa ou escolhe com cuidado e atenção.","Fez uma revisão criteriosa antes de enviar o documento."],
+["deduzir","verbo","Chegar a uma conclusão a partir de informações ou pistas.","Ao ler o texto, conseguiu deduzir a intenção do autor."],
+["delimitar","verbo","Estabelecer os limites ou o alcance de algo.","Antes de começar o trabalho, é importante delimitar o problema."],
+["desempenho","nome","Modo ou nível como uma pessoa, atividade ou sistema funciona ou realiza uma tarefa.","O desempenho melhorou depois de várias semanas de prática."],
+["detalhar","verbo","Apresentar algo com pormenor, explicando as suas partes.","Pediu ao técnico que detalhasse os passos da solução."],
+["discernir","verbo","Perceber ou distinguir claramente entre coisas ou ideias.","É preciso discernir uma opinião de um facto."],
+["eloquente","adjetivo","Que comunica uma ideia de modo claro e expressivo.","O exemplo foi mais eloquente do que uma explicação abstrata."],
+["essencial","adjetivo","Que é fundamental; que não pode ser dispensado.","Primeiro aprende o essencial e depois aprofunda os detalhes."],
+["explícito","adjetivo","Que está expresso de forma direta e clara.","O texto é explícito sobre a data da reunião."],
+["flexível","adjetivo","Que se adapta a diferentes condições ou necessidades.","Um plano de estudo flexível é mais fácil de manter."],
+["fundamentar","verbo","Dar fundamentos, razões ou provas que sustentem uma afirmação.","É importante fundamentar a resposta com elementos do texto."],
+["hesitar","verbo","Demonstrar dúvida ou falta de decisão antes de agir ou responder.","Não hesites em reler a pergunta antes de responder."],
+["implícito","adjetivo","Que está presente ou é compreendido sem ser dito diretamente.","O texto não diz que ele estava preocupado, mas isso pode estar implícito nas pistas."],
+["interpretar","verbo","Compreender e explicar o sentido de algo.","Interpretar um texto exige relacionar as informações."],
+["objetivo","nome","Resultado ou finalidade que se pretende alcançar.","O objetivo desta aula é compreender a diferença entre mas e mais."],
+["pertinente","adjetivo","Que é adequado ou tem relação direta com o assunto tratado.","A pergunta foi pertinente ao tema da aula."],
+["preciso","adjetivo","Que é exato, claro ou rigoroso.","Use um termo preciso quando quiser evitar confusão."],
+["raciocínio","nome","Processo de pensar e relacionar informações para chegar a uma conclusão.","O raciocínio deve seguir as pistas apresentadas no problema."],
+["ressalva","nome","Observação que limita, modifica ou chama atenção para uma condição de uma afirmação.","Fez uma ressalva: a solução funciona, mas exige mais tempo."],
+["síntese","nome","Apresentação breve das ideias ou elementos essenciais de algo mais amplo.","No fim da aula, faz uma síntese do que aprendeste."],
+["subsequente","adjetivo","Que vem depois de algo; seguinte.","Na etapa subsequente, vamos praticar com exercícios."],
+["sucinto","adjetivo","Breve e direto, sem elementos desnecessários.","O email deve ser sucinto, mas suficientemente claro."],
+["sustentar","verbo","Dar apoio ou fundamento a uma ideia, afirmação ou posição.","Usa exemplos do texto para sustentar a tua resposta."],
+["transmitir","verbo","Fazer chegar uma informação, mensagem ou ideia a outra pessoa.","Uma boa comunicação deve transmitir a ideia sem criar confusão."],
+["verificar","verbo","Examinar algo para confirmar se está correto ou se corresponde ao esperado.","Antes de enviar o email, verifica os nomes e a data."],
+["vocabulário","nome","Conjunto de palavras que uma pessoa conhece ou utiliza, ou conjunto de palavras de uma área.","A leitura frequente ajuda a ampliar o vocabulário."],
+["analogia","nome","Relação de semelhança entre coisas diferentes, usada para facilitar a compreensão.","O professor usou uma analogia para explicar o funcionamento da rede."],
+["argumento","nome","Razão ou conjunto de razões usado para defender uma ideia.","O argumento precisa de ser claro e sustentado por informação relevante."],
+["clareza","nome","Qualidade do que é fácil de compreender.","A clareza da explicação ajudou o aluno a perceber a regra."],
+["complementar","adjetivo","Que completa ou acrescenta algo a outra coisa.","O exemplo é complementar à explicação principal."],
+["contraste","nome","Diferença evidente entre duas coisas ou ideias.","O conector 'porém' pode introduzir contraste."],
+["inferir","verbo","Concluir algo com base em indícios ou informações disponíveis.","Podes inferir o sentimento da personagem pelas ações descritas."],
+["nuance","nome","Diferença ou variação subtil de significado, tom ou qualidade.","A palavra escolhida acrescenta uma nuance importante à frase."],
+["persuadir","verbo","Levar alguém a aceitar uma ideia ou a agir de determinada maneira por meio de argumentos.","O anúncio tenta persuadir o leitor a experimentar o produto."],
+["relevante","adjetivo","Que tem importância ou relação significativa com o assunto.","Seleciona apenas a informação relevante para a resposta."],
+["revisar","verbo","Voltar a examinar um texto ou trabalho para corrigir ou melhorar algo.","Reserva alguns minutos para revisar o texto antes de o enviar."],
+["semântica","nome","Área relacionada ao significado das palavras, expressões e frases.","A semântica ajuda a compreender diferenças de sentido entre palavras parecidas."],
+["sintaxe","nome","Conjunto de relações e regras que organizam as palavras numa frase.","A sintaxe ajuda a perceber como as palavras se relacionam na oração."],
+["tópico","nome","Assunto ou tema de que se trata.","O tópico principal da aula é a pontuação."],
+["adequado","adjetivo","Que é apropriado para determinada situação ou finalidade.","Escolhe um tom adequado ao falar com um cliente."],
+["aplicável","adjetivo","Que pode ser aplicado ou utilizado numa determinada situação.","A regra é aplicável a este exemplo."],
+["compreender","verbo","Perceber o sentido, a natureza ou a razão de algo.","Não basta decorar a regra; é preciso compreender quando a usar."],
+["conclusão","nome","Ideia ou resultado a que se chega depois de analisar informações.","A conclusão deve estar ligada aos dados apresentados."],
+["distinção","nome","Ato ou capacidade de diferenciar coisas ou conceitos.","A distinção entre mas e mais evita muitos erros."],
+["evidência","nome","Informação ou elemento que ajuda a demonstrar que algo é verdadeiro ou plausível.","A resposta deve ter evidência no próprio texto."],
+["fluência","nome","Capacidade de realizar uma atividade, especialmente falar ou ler, com naturalidade e continuidade.","A leitura diária pode melhorar a fluência."],
+["ortografia","nome","Conjunto de regras relativas à escrita correta das palavras.","A ortografia é uma parte importante da revisão de texto."],
+["pronúncia","nome","Modo como os sons de uma palavra são articulados ao falar.","A pronúncia correta facilita a compreensão oral."],
+["pontuação","nome","Conjunto de sinais e regras usados para organizar e interpretar um texto escrito.","A pontuação ajuda a separar e relacionar ideias."]
+];
+
+function dateKey(){
+  const d=new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function hashText(s){
+  let h=2166136261;
+  for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}
+  return h>>>0;
+}
+function dailyWords(extra=0){
+  const seed=hashText(dateKey()+"|"+extra);
+  let arr=DAILY_WORDS.map((w,i)=>({w,i,key:(Math.imul(seed^(i*2654435761),1597334677)>>>0)}));
+  arr.sort((a,b)=>a.key-b.key);
+  return arr.slice(0,6).map(x=>x.w);
+}
+function dailyDictHTML(){
+  if(state.area!=='portugues')return '';
+  const words=dailyWords(state.dictShuffle||0);
+  const date=new Date().toLocaleDateString('pt-PT',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  return `<section class="daily-dict" id="dicionario-diario" data-tab="dicionario-diario">
+    <div class="daily-dict-head"><div><div class="daily-dict-kicker">📖 VOCABULÁRIO · HOJE</div><h2>Dicionário diário</h2></div><div class="daily-dict-date">${date}</div></div>
+    <p class="daily-dict-intro">Todos os dias recebes uma seleção nova de palavras. A seleção muda automaticamente pela data; usa-as em frases tuas para transformar conhecimento em vocabulário ativo.</p>
+    <div class="daily-words">${words.map((w,i)=>`<article class="word-card"><div class="word-top"><h3>${w[0]}</h3><span class="word-type">${w[1]}</span></div><p class="word-meaning"><b>Significado:</b> ${w[2]}</p><p class="word-example"><b>Exemplo:</b> ${w[3]}</p></article>`).join('')}</div>
+    <div class="dict-actions"><button class="dict-btn" data-dict-shuffle>🎲 Outra seleção</button><button class="dict-btn" data-dict-today>↻ Repor palavras de hoje</button></div>
+    <p class="dict-source">Para consulta e confirmação de significados, a referência recomendada é o Dicionário Priberam da Língua Portuguesa. As definições acima são versões pedagógicas resumidas para estudo.</p>
+  </section>`;
+}
+
 /* ========== 2. ESTADO ========== */
 const savedV2=JSON.parse(localStorage.getItem('guia_estudo_v2')||'null');
 const state=Object.assign({area:'redes',all:false,xp:0,done:{redes:[],gestao:[]},answers:{},started:Date.now()},savedV2||{});
@@ -390,12 +520,24 @@ const tableHTML=(h,rows,id)=>`<div class="tbl"><table><thead><tr>${h.map(x=>`<th
 function cardHTML(id,num,title,diagram,exp){
   const n=parseInt(String(num).replace(/\D/g,''),10);
   const done=state.done[state.area].includes(n),seen=state.seen[state.area].includes(n);
+  const lesson=(Number.isFinite(n)&&n>0)?studyData[state.area].lessons[n-1]:null;
+  const c=(lesson&&CASES[state.area])?CASES[state.area][lesson.tab]:null;
+  const book=c?`
+    <div class="book-panel">
+      <div class="book-kicker">LEITURA GUIADA · ${state.area==='portugues'?'COMPREENDER E APLICAR':'APRENDER NA PRÁTICA'}</div>
+      <h3>${title}</h3>
+      <p><b>Ideia central:</b> ${exp||''}</p>
+      <div class="book-block"><b>📍 Situação</b><p>${c[0]}</p></div>
+      <div class="book-block"><b>🔎 O que deves perceber</b><p>${c[1]}</p></div>
+      <div class="book-block"><b>⚙️ Como pensar e agir</b><ol class="book-steps"><li>Identifica exatamente o problema ou a dúvida.</li><li>Procura no exemplo a pista que confirma a regra ou conceito.</li><li>Aplica o procedimento indicado e compara com o resultado.</li></ol><p style="margin-top:8px">${c[2]}</p></div>
+      <div class="book-block"><b>🎯 O que aprendeste</b><p>${c[3]}</p></div>
+      <div class="book-question"><strong>🎤 Pergunta de compreensão</strong><p>${c[4]}</p><details class="book-answer"><summary>🧠 Ver resposta comentada</summary><p>${c[5]}</p></details></div>
+    </div>`:'';
   return `<section class="card" id="${id}" data-tab="${id}" data-lesson="${n}">
     <div class="ch"><span class="num">${num}</span><h2>${title}</h2></div>
     <div class="dg">${diagram}</div>
-    ${exp?`<button class="ex" aria-expanded="false" aria-controls="${id}-x"><b style="font-weight:400">Ver explicação</b><span>▾</span></button><div class="xp" id="${id}-x"><div><p>${exp}</p></div></div>`:''}
-    ${Number.isFinite(n)&&n>0&&CASES[state.area]&&CASES[state.area][studyData[state.area].lessons[n-1]?.tab]?`<div class="case-actions"><button type="button" class="case-btn" data-case-toggle="${id}-case" aria-expanded="false">📖 Ver situação prática</button></div><div class="case" id="${id}-case"><div><div class="case-inner"><div class="case-row"><b>📍 SITUAÇÃO</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][0]}</p></div><div class="case-row"><b>🔎 O QUE OBSERVAR</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][1]}</p></div><div class="case-row"><b>⚙️ O QUE FAZER</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][2]}</p></div><div class="case-row"><b>🎯 RESULTADO</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][3]}</p></div><div class="case-row"><b>🎤 PERGUNTA PARA PRATICAR</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][4]}</p></div><div class="case-row answer"><b>🧠 RESPOSTA-CHAVE</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][5]}</p></div></div></div></div>`:''}
-    ${Number.isFinite(n)&&n>0?`<button class="complete ${done?'done':''}" data-complete="${n}" ${(!done&&!seen)?'disabled':''}>${done?'✓ Aula concluída':seen?'□ Marcar aula como concluída':'🔒 Abre uma explicação ou situação prática para concluir'} <span>+100 XP</span></button>`:''}
+    ${exp?`<button class="ex" aria-expanded="false" aria-controls="${id}-x"><b style="font-weight:400">📖 Estudar como num livro</b><span>▾</span></button><div class="xp" id="${id}-x"><div>${book||`<div class="book-panel"><div class="book-kicker">EXPLICAÇÃO ESSENCIAL</div><p>${exp}</p></div>`}</div></div>`:''}
+    ${Number.isFinite(n)&&n>0?`<button class="complete ${done?'done':''}" data-complete="${n}" ${(!done&&!seen)?'disabled':''}>${done?'✓ Aula concluída':seen?'□ Marcar aula como concluída':'🔒 Abre a explicação para começar'} <span>+100 XP</span></button>`:''}
   </section>`;
 }
 
@@ -517,6 +659,7 @@ function renderLessons(d){
       <button class="jump" data-jump="v2-progress">🎯 Progresso</button>
     </div>
   </div>`;
+  h+=(state.area==='portugues'?dailyDictHTML():'');
   h+=levelsHTML(d);
   h+=finCardHTML(d);
   h+=v11HTML();
@@ -877,7 +1020,7 @@ function renderTabs(d){
     if(k<u){d.lessons.slice(k*LVN,k*LVN+LVN).forEach((l,i)=>{const n=k*LVN+i+1;items.push(['lesson-'+pad(n),lvVisible(a,n)?pad(n)+' '+l.tab:'🔒 '+pad(n)])});items.push(['teste-'+(k+1),(lvAllDone(a,k)?'🧪 ':'🔒 ')+'Teste '+(k+1)])}
     else items.push(['nivel-'+(k+1),'🔒 Nível '+(k+1)]);
   }
-  if(a!=='portugues')items.push(['v11','🎯 Treino V11']);items.push(['v12','🖼️ Imagens V12'],['avaliacao','🎓 Avaliação']);
+  if(a==='portugues')items.push(['dicionario-diario','📖 Palavra do dia']); if(a!=='portugues')items.push(['v11','🎯 Treino V11']);items.push(['v12','🖼️ Imagens V12'],['avaliacao','🎓 Avaliação']);
   if(d.siglas)items.push(['siglas','Siglas'],['termos','Termos']);
   items.push(['resumo','Resumo']);
   tabs.innerHTML=items.map(([id,t])=>`<button class="pill" data-target="${id}">${t}</button>`).join('');
@@ -942,6 +1085,8 @@ function switchSection(k){if(k!==state.area){state.area=k;persist();renderApp()}
 document.querySelector('.seg').addEventListener('click',e=>{const b=e.target.closest('button');b&&switchSection(b.dataset.k)});
 tabs.addEventListener('click',e=>{const p=e.target.closest('.pill');p&&scrollToLesson(p.dataset.target)});
 app.addEventListener('click',e=>{
+  if(e.target.closest('[data-dict-shuffle]')){state.dictShuffle=(state.dictShuffle||0)+1;const box=document.getElementById('dicionario-diario');if(box){box.outerHTML=dailyDictHTML();setActiveTab('dicionario-diario')}return;}
+  if(e.target.closest('[data-dict-today]')){state.dictShuffle=0;const box=document.getElementById('dicionario-diario');if(box){box.outerHTML=dailyDictHTML();setActiveTab('dicionario-diario')}return;}
   const cb=e.target.closest('[data-case-toggle]');
   if(cb){
     const panel=document.getElementById(cb.dataset.caseToggle);
