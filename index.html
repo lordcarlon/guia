@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Guia de Estudo · V25</title>
+<title>Guia de Estudo · V26</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#07090f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -208,7 +208,7 @@ td:nth-child(2){color:var(--t)}
 
 </style>
 
-<!-- V14_LOCAL_IMAGES -->
+<!-- V26_LOCAL_IMAGES -->
 <script>
 /* Todas as imagens do setor visual são ficheiros locais do próprio PWA. */
 window.V13_IMAGE_MODE = "local";
@@ -556,6 +556,29 @@ let obs;
 /* ========== 3. RENDERIZAÇÃO ========== */
 const tableHTML=(h,rows,id)=>`<div class="tbl"><table><thead><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody ${id?`id="${id}"`:''}>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 
+function v26Text(x){return String(x??'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim()}
+function v26Trap(a,title,answer){
+  const t=String(title||'').toLowerCase();
+  const pairs=[
+    ['vs vendas','não confundir aquisição de novos clientes com gestão, retenção e expansão de clientes existentes'],
+    ['pan vs lan','não confundir uma rede pessoal de curto alcance com uma rede local de casa, escritório ou edifício'],
+    ['internet vs web','não tratar Internet e Web como sinónimos: a Web é um serviço que funciona sobre a Internet'],
+    ['fio vs wi-fi','não escolher a tecnologia apenas por preferência: compara estabilidade, mobilidade, interferência e segurança'],
+    ['upsell e cross-sell','não confundir aumentar a versão do que o cliente já usa com adicionar um produto ou serviço complementar'],
+    ['sílaba tónica','não confundir a sílaba tónica com a sílaba escrita com acento gráfico; nem toda sílaba tónica leva acento'],
+    ['acentuação gráfica','não aplicar acentos apenas porque uma palavra “soa forte”; primeiro identifica a posição da sílaba tónica e a regra aplicável'],
+    ['concordância','não ajustar apenas uma palavra isolada: verifica a relação entre as palavras que precisam concordar'],
+    ['pontuação','não colocar vírgula apenas porque fizeste uma pausa ao falar; verifica a estrutura da frase'],
+    ['inferência','não inventar informação que o texto não sustenta; a conclusão deve resultar de pistas disponíveis'],
+    ['informação explícita','não responder com uma interpretação quando a pergunta pede algo que está diretamente escrito'],
+    ['gestão de expectativas','não prometer prazos ou resultados que ainda não foram confirmados'],
+    ['sla','não esperar pelo limite do SLA para agir quando já existe risco de incumprimento'],
+    ['crm','não guardar informação crítica apenas na memória; regista interação, decisão, responsável e próximo passo'],
+    ['métricas','não olhar para um indicador isoladamente sem saber o que mede, o período e o contexto'],
+  ];
+  for(const [needle,msg] of pairs) if(t.includes(needle)) return msg+'.';
+  return 'Não te limites a decorar a definição. Usa a situação apresentada para justificar a decisão e verifica se o resultado esperado faz sentido.';
+}
 function lessonPedagogyHTML(a,n,l,exp){
   const c=CASES[a]&&CASES[a][l.tab];
   const safe=(x)=>x==null?'':String(x);
@@ -564,33 +587,37 @@ function lessonPedagogyHTML(a,n,l,exp){
   const action=c?c[2]:'';
   const result=c?c[3]:'';
   const q=c?c[4]:('O que consegues explicar ou fazer depois desta aula sobre '+l.title+'?');
-  const ans=c?c[5]:exp.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+  const ans=c?c[5]:v26Text(exp);
   const theme=studyData[a].theme==='gold'?'gold':'';
-  const objective='No fim desta aula, deves conseguir explicar "'+l.title+'" com as tuas próprias palavras e aplicar o conceito a uma situação prática.';
-  const error='Erro a evitar: decorar a definição sem conseguir reconhecer o conceito no contexto apresentado. Primeiro identifica o problema, depois escolhe a ação e confirma o resultado.';
-  const stateKey='learnChecks';
-  state[stateKey]=state[stateKey]||{};
-  const checkDone=!!state[stateKey][a+':'+n];
-  const mastery=state.done[a].includes(n)&&checkDone;
-  return `<div class="learn-lesson ${theme}" data-learning-lesson="${a}:${n}">
-    <div class="learn-kicker">AULA ESTRUTURADA · ${String(n).padStart(2,'0')}</div>
+  const objective=c
+    ? `No fim desta aula, deves conseguir explicar <b>${l.title}</b>, reconhecer este conceito numa situação real, escolher uma ação coerente e justificar a tua decisão.`
+    : `No fim desta aula, deves conseguir explicar <b>${l.title}</b> com precisão e aplicá-lo num exemplo concreto.`;
+  const trap=v26Trap(a,l.title,ans);
+  state.learnChecks=state.learnChecks||{};
+  const key=a+':'+n;
+  const checkDone=!!state.learnChecks[key];
+  const completed=state.done[a].includes(n);
+  const mastery=completed&&checkDone;
+  return `<div class="learn-lesson v26 ${theme}" data-learning-lesson="${a}:${n}">
+    <div class="learn-kicker">AULA GUIADA · V26 · ${String(n).padStart(2,'0')}</div>
     <div class="learn-title">${l.title}</div>
     <div class="learn-grid">
-      <div class="learn-block wide"><b>🎯 Objetivo verificável</b><p>${objective}</p></div>
-      ${ctx?`<div class="learn-block"><b>📍 Contexto / situação</b><p>${ctx}</p></div>`:''}
-      <div class="learn-block"><b>🧠 Conceito central</b><p>${safe(exp).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim()}</p></div>
-      ${observe?`<div class="learn-block"><b>🔎 O que observar</b><p>${observe}</p></div>`:''}
-      ${action?`<div class="learn-block"><b>⚙️ Aplicação</b><p>${action}</p></div>`:''}
-      ${result?`<div class="learn-block"><b>🎯 Resultado esperado</b><p>${result}</p></div>`:''}
-      ${c?`<div class="learn-block wide"><b>🧭 Raciocínio guiado</b><ol class="learn-steps"><li>Identifica o que está a acontecer no contexto.</li><li>Usa o conceito da aula para decidir o que deve ser feito.</li><li>Compara a ação com o resultado esperado e explica porquê.</li></ol></div>`:''}
-      <div class="learn-block wide"><b>⚠️ Erro a evitar</b><p>${error}</p></div>
+      <div class="learn-block wide highlight"><b class="learn-label">🎯 O que vais conseguir fazer</b><p>${objective}</p><div class="small-note">Critério: não basta repetir a definição; tens de conseguir reconhecer e aplicar o conceito.</div></div>
+      ${ctx?`<div class="learn-block"><b class="learn-label">📍 Situação concreta</b><p>${ctx}</p></div>`:''}
+      <div class="learn-block"><b class="learn-label">🧠 Explicação em linguagem simples</b><p>${safe(exp)}</p></div>
+      ${observe?`<div class="learn-block"><b class="learn-label">🔎 Sinal-chave: o que deves observar</b><p>${observe}</p></div>`:''}
+      ${action?`<div class="learn-block"><b class="learn-label">⚙️ Como aplicar neste caso</b><p>${action}</p></div>`:''}
+      ${result?`<div class="learn-block highlight"><b class="learn-label">🎯 Resultado esperado</b><p>${result}</p></div>`:''}
+      ${c?`<div class="learn-block wide"><b class="learn-label">🧭 Raciocínio passo a passo</b><ol class="learn-steps"><li>Identifica exatamente o problema ou objetivo apresentado.</li><li>Procura no contexto o sinal que diferencia este tema de outros parecidos.</li><li>Liga esse sinal ao conceito aprendido nesta aula.</li><li>Escolhe a ação indicada e verifica se ela conduz ao resultado esperado.</li></ol></div>`:''}
+      <div class="learn-block wide"><b class="learn-label">⚠️ Armadilha específica deste tema</b><p>${trap}</p></div>
     </div>
     <div class="learn-check">
-      <div class="q">🔍 Verificação rápida: ${q}</div>
-      <button class="learn-btn" type="button" data-learn-check="${a}:${n}">${checkDone?'✓ Verificação concluída':'Ver resposta e confirmar compreensão'}</button>
+      <div class="q">🔍 Verificação: ${q}</div>
+      <button class="learn-btn" type="button" data-learn-check="${key}">${checkDone?'✓ Verificação concluída':'Responder / revelar resposta explicada'}</button>
       <div class="learn-answer ${checkDone?'open':''}" id="learn-answer-${a}-${n}"><b>Resposta-chave:</b> ${ans}</div>
+      <div class="v26-source">A verificação é baseada na situação e no conteúdo desta própria aula.</div>
     </div>
-    <div class="learn-status"><span class="learn-badge">VISITADA</span><span class="learn-badge ${state.done[a].includes(n)?'master':''}">${state.done[a].includes(n)?'✓ CONCLUÍDA':'PENDENTE'}</span><span class="learn-badge ${mastery?'master':''}">${mastery?'★ DOMÍNIO CONFIRMADO':'DOMÍNIO: concluir + verificar'}</span></div>
+    <div class="learn-status"><span class="learn-badge">${completed?'✓ CONCLUÍDA':'AULA ATUAL'}</span><span class="learn-badge ${checkDone?'master':''}">${checkDone?'✓ COMPREENSÃO VERIFICADA':'COMPREENSÃO: pendente'}</span><span class="learn-badge ${mastery?'master':''}">${mastery?'★ DOMÍNIO CONFIRMADO':'DOMÍNIO: concluir + verificar'}</span></div>
   </div>`;
 }
 
@@ -599,9 +626,9 @@ function cardHTML(id,num,title,diagram,exp){
   const done=state.done[state.area].includes(n),seen=state.seen[state.area].includes(n);
   return `<section class="card" id="${id}" data-tab="${id}" data-lesson="${n}">
     <div class="ch"><span class="num">${num}</span><h2>${title}</h2></div>
-    <div class="dg">${diagram}</div>
     ${lessonPedagogyHTML(state.area,n,studyData[state.area].lessons[n-1],exp)}
-    ${exp?`<button class="ex" aria-expanded="false" aria-controls="${id}-x"><b style="font-weight:400">Abrir explicação completa / conteúdo de apoio</b><span>▾</span></button><div class="xp" id="${id}-x"><div><div class="bk">${bookHTML(state.area,n,exp)}</div></div></div>`:''}
+    <div class="dg">${diagram}</div>
+    ${exp?`<div class="v26-deep"><button class="ex" aria-expanded="false" aria-controls="${id}-x"><b style="font-weight:400">📖 Abrir conteúdo de apoio e leitura aprofundada</b><span>▾</span></button><div class="xp" id="${id}-x"><div><div class="bk">${bookHTML(state.area,n,exp)}</div></div></div></div>`:''}
     ${Number.isFinite(n)&&n>0&&CASES[state.area]&&CASES[state.area][studyData[state.area].lessons[n-1]?.tab]?`<div class="case-actions"><button type="button" class="case-btn" data-case-toggle="${id}-case" aria-expanded="false">📖 Ver situação prática</button></div><div class="case" id="${id}-case"><div><div class="case-inner"><div class="case-row"><b>📍 SITUAÇÃO</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][0]}</p></div><div class="case-row"><b>🔎 O QUE OBSERVAR</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][1]}</p></div><div class="case-row"><b>⚙️ O QUE FAZER</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][2]}</p></div><div class="case-row"><b>🎯 RESULTADO</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][3]}</p></div><div class="case-row"><b>🎤 PERGUNTA PARA PRATICAR</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][4]}</p></div><div class="case-row answer"><b>🧠 RESPOSTA-CHAVE</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][5]}</p></div></div></div></div>`:''}
     ${Number.isFinite(n)&&n>0?`<button class="complete ${done?'done':''}" data-complete="${n}" ${(!done&&!seen)?'disabled':''}>${done?'✓ Aula concluída':seen?'□ Marcar aula como concluída':'🔒 Abre uma explicação ou situação prática para concluir'} <span>+100 XP</span></button>`:''}
   </section>`;
@@ -736,7 +763,7 @@ function lhWeak(){return (state.wrong||[]).length}
 function lhNext(){const d=studyData[state.area],done=state.done[state.area]||[];const i=d.lessons.findIndex((_,k)=>!done.includes(k+1));return i<0?d.lessons.length-1:i}
 function lhRecommend(){if(lhWeak()>0)return ['Revisão prioritária','Tens '+lhWeak()+' erro(s) registado(s). Revê antes de avançar.','v2-review'];const i=lhNext();return ['Próxima aula',studyData[state.area].lessons[i].title,'lesson-'+pad(i+1)]}
 function lhHub(){const d=studyData[state.area],idx=lhNext(),word=lhDaily(),rec=lhRecommend(),pct=percent(),acc=lhAccuracy(),done=lhTotalDone(),total=totalLessons();
- return `<section class="lh" id="learning-hub"><div class="lh-head"><div><div class="lh-k">// SISTEMA DE APRENDIZAGEM · V25</div><h2>Centro de Aprendizagem</h2><div class="lh-sub">Estudar → compreender → aplicar → verificar → rever → dominar.</div></div><span class="num">${pct}%</span></div>
+ return `<section class="lh" id="learning-hub"><div class="lh-head"><div><div class="lh-k">// SISTEMA DE APRENDIZAGEM · V26</div><h2>Centro de Aprendizagem</h2><div class="lh-sub">Estudar → compreender → aplicar → verificar → rever → dominar.</div></div><span class="num">${pct}%</span></div>
  <div class="lh-grid"><div class="lh-stat"><small>Aulas concluídas</small><b>${done}/${total}</b></div><div class="lh-stat"><small>Precisão</small><b>${acc}%</b></div><div class="lh-stat"><small>XP</small><b>${state.xp}</b></div><div class="lh-stat"><small>Erros para rever</small><b class="${lhWeak()?'lh-warn':'lh-good'}">${lhWeak()}</b></div></div>
  <div class="lh-cycle">${['Objetivo','Explicação','Exemplo','Aplicação','Verificação','Revisão'].map((x,i)=>`<div class="lh-step ${i===0?'on':''}">${i+1}. ${x}</div>`).join('')}</div>
  <div class="lh-dict"><b>📖 Palavra do dia · ${word[0]}</b><p>${word[1]}</p><small>Exemplo: ${word[2]}</small></div>
@@ -748,7 +775,7 @@ function lhJump(id){const el=document.getElementById(id);if(!el)return;el.scroll
 
 function renderLessons(d){
   const aDone=state.done[state.area].length,aTot=d.lessons.length,aPct=Math.round(aDone/aTot*100);
-  let h=lhHub()+`<div class="studybar">
+  let h=`<div class="v26-banner"><b>V26 · MODO DE APRENDIZAGEM PROFISSIONAL</b><span>Cada aula agora começa por objetivo, situação, explicação, aplicação, armadilha, raciocínio e verificação. O conteúdo antigo permanece como leitura aprofundada.</span></div>`+lhHub()+`<div class="studybar">
     <div class="studytop"><span class="studytitle">PROGRESSO · ${d.kicker}</span><span class="studyxp">${state.xp} XP · Nível ${level()}</span></div>
     <div class="progressbar"><i style="width:${aPct}%"></i></div>
     <div class="studytop" style="margin-top:7px;margin-bottom:0"><span class="studyxp">${aDone}/${aTot} aulas concluídas</span><span class="studyxp">${aPct}%</span></div>
@@ -1192,7 +1219,7 @@ app.addEventListener('click',e=>{
   const lc=e.target.closest('[data-learn-check]');
   if(lc){
     const key=lc.dataset.learnCheck, panel=document.getElementById('learn-answer-'+key.replace(':','-'));
-    state.learnChecks=state.learnChecks||{}; state.learnChecks[key]=true; persist();
+    state.learnChecks=state.learnChecks||{}; state.learnChecks[key]=true; const [areaKey,lessonKey]=key.split(':'); const card=lc.closest('.card'); if(card) markSeen(card); persist();
     if(panel)panel.classList.add('open');
     lc.textContent='✓ Verificação concluída';
     const wrap=lc.closest('.learn-lesson');
@@ -1337,7 +1364,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')v12Close()});
  window.addEventListener('offline',()=>set('📴 Sem internet: a usar a cópia guardada'));
  window.addEventListener('online',()=>set('✅ Online · modo offline pronto'));
 })();
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+if('serviceWorker' in navigator&&location.protocol.startsWith('http')){addEventListener('load',()=>navigator.serviceWorker.register('sw.js?v=26').catch(()=>{}));navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!sessionStorage.getItem('v26-reloaded')){sessionStorage.setItem('v26-reloaded','1');location.reload()}})}
 </script>
 </body>
 </html>
