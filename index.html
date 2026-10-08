@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Guia de Estudo · V24</title>
+<title>Guia de Estudo · V25</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#07090f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -182,6 +182,29 @@ td:nth-child(2){color:var(--t)}
 .lh-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.lh-k{font:.64rem "Space Mono";letter-spacing:1.8px;color:var(--a)}.lh h2{margin:4px 0;font-size:1.12rem}.lh-sub{color:var(--m);font-size:.82rem}.lh-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}.lh-stat{padding:10px;border:1px solid var(--b);border-radius:11px;background:var(--s2)}.lh-stat small{display:block;color:var(--m);font-size:.65rem}.lh-stat b{display:block;margin-top:3px;color:var(--a);font:.9rem "Space Mono"}.lh-actions{display:flex;gap:8px;flex-wrap:wrap}.lh-btn{padding:9px 11px;border-radius:10px;border:1px solid rgba(var(--rgb),.38);background:rgba(var(--rgb),.07);color:var(--a);font:.67rem "Space Mono";cursor:pointer}.lh-btn.primary{background:rgba(var(--rgb),.16);border-color:var(--a)}.lh-cycle{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:12px}.lh-step{padding:7px 4px;border:1px solid var(--b);border-radius:8px;text-align:center;color:var(--m);font-size:.61rem}.lh-step.on{border-color:rgba(var(--rgb),.5);color:var(--a);background:rgba(var(--rgb),.06)}.lh-dict{margin-top:12px;padding:13px;border:1px solid var(--b);border-radius:12px;background:var(--s2)}.lh-dict b{color:var(--a)}.lh-dict p{margin:4px 0;color:var(--t);font-size:.86rem}.lh-dict small{color:var(--m)}.lh-note{margin-top:10px;color:var(--m);font-size:.72rem}.lh-list{display:grid;gap:7px;margin-top:10px}.lh-item{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:9px 10px;border:1px solid var(--b);border-radius:9px;background:var(--s2)}.lh-item span{color:var(--m);font-size:.72rem}.lh-item b{font-size:.76rem}.lh-warn{color:#fbbf24}.lh-good{color:var(--g)}
 @media(max-width:650px){.lh-grid{grid-template-columns:repeat(2,1fr)}.lh-cycle{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:400px){.lh{padding:13px}.lh-cycle{grid-template-columns:repeat(2,1fr)}}
+
+
+/* ===== V25 · AULA PEDAGÓGICA ESTRUTURADA ===== */
+.learn-lesson{margin:12px 0 14px;padding:14px;border:1px solid rgba(0,217,255,.24);border-radius:18px;background:linear-gradient(180deg,rgba(0,217,255,.055),rgba(255,255,255,.018));}
+.learn-lesson.gold{border-color:rgba(212,175,55,.25)}
+.learn-kicker{font:700 .72rem ui-monospace,monospace;letter-spacing:.12em;color:var(--a);margin-bottom:8px}
+.learn-title{font-size:1.05rem;font-weight:800;margin-bottom:12px}
+.learn-grid{display:grid;grid-template-columns:1fr;gap:9px}
+.learn-block{padding:11px 12px;border-radius:13px;background:rgba(0,0,0,.16);border-left:3px solid rgba(0,217,255,.65)}
+.learn-lesson.gold .learn-block{border-left-color:rgba(212,175,55,.8)}
+.learn-block b{display:block;font-size:.76rem;letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;color:var(--a)}
+.learn-lesson.gold .learn-block b{color:#d4af37}
+.learn-block p{margin:0;line-height:1.65;color:var(--tx)}
+.learn-steps{margin:7px 0 0;padding-left:20px;line-height:1.65}
+.learn-check{margin-top:10px;padding:12px;border-radius:13px;border:1px dashed rgba(0,217,255,.35);background:rgba(0,0,0,.12)}
+.learn-check .q{font-weight:700;line-height:1.5}
+.learn-answer{display:none;margin-top:8px;padding:9px;border-radius:10px;background:rgba(0,217,255,.06);line-height:1.55}
+.learn-answer.open{display:block}
+.learn-btn{margin-top:9px;border:1px solid rgba(0,217,255,.35);background:transparent;color:var(--a);border-radius:10px;padding:9px 12px;font-weight:700}
+.learn-status{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.learn-badge{font-size:.72rem;padding:5px 8px;border-radius:999px;background:rgba(255,255,255,.06);opacity:.9}
+.learn-badge.master{border:1px solid rgba(50,205,120,.45);color:#55d98a}
+@media(min-width:700px){.learn-grid{grid-template-columns:1fr 1fr}.learn-block.wide{grid-column:1/-1}}
 
 </style>
 
@@ -519,7 +542,7 @@ const norm=s=>s.replace(/^[^\p{L}\p{N}]+/u,'').split(':')[0].trim().toLowerCase(
 /* ========== 2. ESTADO ========== */
 const savedV2=JSON.parse(localStorage.getItem('guia_estudo_v2')||'null');
 const state=Object.assign({area:'redes',all:false,xp:0,done:{redes:[],gestao:[]},answers:{},started:Date.now()},savedV2||{});
-state.done=state.done||{redes:[],gestao:[],portugues:[]};
+state.done=state.done||{redes:[],gestao:[],portugues:[]};state.learnChecks=state.learnChecks||{};
 state.done.redes=state.done.redes||[];state.done.gestao=state.done.gestao||[];state.done.portugues=state.done.portugues||[];state.answers=state.answers||{};state.xp=state.xp||0;state.ok=state.ok||[];state.wrong=state.wrong||[];state.nAns=state.nAns||0;state.round=state.round||0;state.revTry={};state.final=state.final||freshFinal();state.unl=state.unl||{redes:1,gestao:1,portugues:1};state.unl.portugues=state.unl.portugues||1;state.lt=state.lt||{redes:{},gestao:{},portugues:{}};state.lt.portugues=state.lt.portugues||{};state.seen=state.seen||{redes:[],gestao:[],portugues:[]};state.seen.portugues=state.seen.portugues||[];state.bq=state.bq||{redes:{},gestao:{},portugues:{}};state.exw=state.exw||{};state.rvw=state.rvw||{};state.v11=state.v11||{redes:{score:0,done:[]},gestao:{score:0,done:[]},portugues:{score:0,done:[]}};state.v11.redes=state.v11.redes||{score:0,done:[]};state.v11.gestao=state.v11.gestao||{score:0,done:[]};state.v11.portugues=state.v11.portugues||{score:0,done:[]};
 const persist=()=>localStorage.setItem('guia_estudo_v2',JSON.stringify(state));
 const lessonCount=()=>studyData[state.area].lessons.length;
@@ -533,13 +556,52 @@ let obs;
 /* ========== 3. RENDERIZAÇÃO ========== */
 const tableHTML=(h,rows,id)=>`<div class="tbl"><table><thead><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody ${id?`id="${id}"`:''}>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 
+function lessonPedagogyHTML(a,n,l,exp){
+  const c=CASES[a]&&CASES[a][l.tab];
+  const safe=(x)=>x==null?'':String(x);
+  const ctx=c?c[0]:'';
+  const observe=c?c[1]:'';
+  const action=c?c[2]:'';
+  const result=c?c[3]:'';
+  const q=c?c[4]:('O que consegues explicar ou fazer depois desta aula sobre '+l.title+'?');
+  const ans=c?c[5]:exp.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+  const theme=studyData[a].theme==='gold'?'gold':'';
+  const objective='No fim desta aula, deves conseguir explicar "'+l.title+'" com as tuas próprias palavras e aplicar o conceito a uma situação prática.';
+  const error='Erro a evitar: decorar a definição sem conseguir reconhecer o conceito no contexto apresentado. Primeiro identifica o problema, depois escolhe a ação e confirma o resultado.';
+  const stateKey='learnChecks';
+  state[stateKey]=state[stateKey]||{};
+  const checkDone=!!state[stateKey][a+':'+n];
+  const mastery=state.done[a].includes(n)&&checkDone;
+  return `<div class="learn-lesson ${theme}" data-learning-lesson="${a}:${n}">
+    <div class="learn-kicker">AULA ESTRUTURADA · ${String(n).padStart(2,'0')}</div>
+    <div class="learn-title">${l.title}</div>
+    <div class="learn-grid">
+      <div class="learn-block wide"><b>🎯 Objetivo verificável</b><p>${objective}</p></div>
+      ${ctx?`<div class="learn-block"><b>📍 Contexto / situação</b><p>${ctx}</p></div>`:''}
+      <div class="learn-block"><b>🧠 Conceito central</b><p>${safe(exp).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim()}</p></div>
+      ${observe?`<div class="learn-block"><b>🔎 O que observar</b><p>${observe}</p></div>`:''}
+      ${action?`<div class="learn-block"><b>⚙️ Aplicação</b><p>${action}</p></div>`:''}
+      ${result?`<div class="learn-block"><b>🎯 Resultado esperado</b><p>${result}</p></div>`:''}
+      ${c?`<div class="learn-block wide"><b>🧭 Raciocínio guiado</b><ol class="learn-steps"><li>Identifica o que está a acontecer no contexto.</li><li>Usa o conceito da aula para decidir o que deve ser feito.</li><li>Compara a ação com o resultado esperado e explica porquê.</li></ol></div>`:''}
+      <div class="learn-block wide"><b>⚠️ Erro a evitar</b><p>${error}</p></div>
+    </div>
+    <div class="learn-check">
+      <div class="q">🔍 Verificação rápida: ${q}</div>
+      <button class="learn-btn" type="button" data-learn-check="${a}:${n}">${checkDone?'✓ Verificação concluída':'Ver resposta e confirmar compreensão'}</button>
+      <div class="learn-answer ${checkDone?'open':''}" id="learn-answer-${a}-${n}"><b>Resposta-chave:</b> ${ans}</div>
+    </div>
+    <div class="learn-status"><span class="learn-badge">VISITADA</span><span class="learn-badge ${state.done[a].includes(n)?'master':''}">${state.done[a].includes(n)?'✓ CONCLUÍDA':'PENDENTE'}</span><span class="learn-badge ${mastery?'master':''}">${mastery?'★ DOMÍNIO CONFIRMADO':'DOMÍNIO: concluir + verificar'}</span></div>
+  </div>`;
+}
+
 function cardHTML(id,num,title,diagram,exp){
   const n=parseInt(String(num).replace(/\D/g,''),10);
   const done=state.done[state.area].includes(n),seen=state.seen[state.area].includes(n);
   return `<section class="card" id="${id}" data-tab="${id}" data-lesson="${n}">
     <div class="ch"><span class="num">${num}</span><h2>${title}</h2></div>
     <div class="dg">${diagram}</div>
-    ${exp?`<button class="ex" aria-expanded="false" aria-controls="${id}-x"><b style="font-weight:400">Ver explicação</b><span>▾</span></button><div class="xp" id="${id}-x"><div><div class="bk">${bookHTML(state.area,n,exp)}</div></div></div>`:''}
+    ${lessonPedagogyHTML(state.area,n,studyData[state.area].lessons[n-1],exp)}
+    ${exp?`<button class="ex" aria-expanded="false" aria-controls="${id}-x"><b style="font-weight:400">Abrir explicação completa / conteúdo de apoio</b><span>▾</span></button><div class="xp" id="${id}-x"><div><div class="bk">${bookHTML(state.area,n,exp)}</div></div></div>`:''}
     ${Number.isFinite(n)&&n>0&&CASES[state.area]&&CASES[state.area][studyData[state.area].lessons[n-1]?.tab]?`<div class="case-actions"><button type="button" class="case-btn" data-case-toggle="${id}-case" aria-expanded="false">📖 Ver situação prática</button></div><div class="case" id="${id}-case"><div><div class="case-inner"><div class="case-row"><b>📍 SITUAÇÃO</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][0]}</p></div><div class="case-row"><b>🔎 O QUE OBSERVAR</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][1]}</p></div><div class="case-row"><b>⚙️ O QUE FAZER</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][2]}</p></div><div class="case-row"><b>🎯 RESULTADO</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][3]}</p></div><div class="case-row"><b>🎤 PERGUNTA PARA PRATICAR</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][4]}</p></div><div class="case-row answer"><b>🧠 RESPOSTA-CHAVE</b><p>${CASES[state.area][studyData[state.area].lessons[n-1].tab][5]}</p></div></div></div></div>`:''}
     ${Number.isFinite(n)&&n>0?`<button class="complete ${done?'done':''}" data-complete="${n}" ${(!done&&!seen)?'disabled':''}>${done?'✓ Aula concluída':seen?'□ Marcar aula como concluída':'🔒 Abre uma explicação ou situação prática para concluir'} <span>+100 XP</span></button>`:''}
   </section>`;
@@ -674,7 +736,7 @@ function lhWeak(){return (state.wrong||[]).length}
 function lhNext(){const d=studyData[state.area],done=state.done[state.area]||[];const i=d.lessons.findIndex((_,k)=>!done.includes(k+1));return i<0?d.lessons.length-1:i}
 function lhRecommend(){if(lhWeak()>0)return ['Revisão prioritária','Tens '+lhWeak()+' erro(s) registado(s). Revê antes de avançar.','v2-review'];const i=lhNext();return ['Próxima aula',studyData[state.area].lessons[i].title,'lesson-'+pad(i+1)]}
 function lhHub(){const d=studyData[state.area],idx=lhNext(),word=lhDaily(),rec=lhRecommend(),pct=percent(),acc=lhAccuracy(),done=lhTotalDone(),total=totalLessons();
- return `<section class="lh" id="learning-hub"><div class="lh-head"><div><div class="lh-k">// SISTEMA DE APRENDIZAGEM · V24</div><h2>Centro de Aprendizagem</h2><div class="lh-sub">Estudar → compreender → aplicar → verificar → rever → dominar.</div></div><span class="num">${pct}%</span></div>
+ return `<section class="lh" id="learning-hub"><div class="lh-head"><div><div class="lh-k">// SISTEMA DE APRENDIZAGEM · V25</div><h2>Centro de Aprendizagem</h2><div class="lh-sub">Estudar → compreender → aplicar → verificar → rever → dominar.</div></div><span class="num">${pct}%</span></div>
  <div class="lh-grid"><div class="lh-stat"><small>Aulas concluídas</small><b>${done}/${total}</b></div><div class="lh-stat"><small>Precisão</small><b>${acc}%</b></div><div class="lh-stat"><small>XP</small><b>${state.xp}</b></div><div class="lh-stat"><small>Erros para rever</small><b class="${lhWeak()?'lh-warn':'lh-good'}">${lhWeak()}</b></div></div>
  <div class="lh-cycle">${['Objetivo','Explicação','Exemplo','Aplicação','Verificação','Revisão'].map((x,i)=>`<div class="lh-step ${i===0?'on':''}">${i+1}. ${x}</div>`).join('')}</div>
  <div class="lh-dict"><b>📖 Palavra do dia · ${word[0]}</b><p>${word[1]}</p><small>Exemplo: ${word[2]}</small></div>
@@ -1127,6 +1189,16 @@ app.addEventListener('click',e=>{
   if(e.target.closest('[data-lh-refresh]')){lhRefresh();return}
   if(e.target.closest('[data-lh-dict]')){lhDictLearn();return}
 
+  const lc=e.target.closest('[data-learn-check]');
+  if(lc){
+    const key=lc.dataset.learnCheck, panel=document.getElementById('learn-answer-'+key.replace(':','-'));
+    state.learnChecks=state.learnChecks||{}; state.learnChecks[key]=true; persist();
+    if(panel)panel.classList.add('open');
+    lc.textContent='✓ Verificação concluída';
+    const wrap=lc.closest('.learn-lesson');
+    if(wrap){const badges=wrap.querySelectorAll('.learn-badge'); const done=wrap.closest('.card')?.classList.contains('done') || state.done[key.split(':')[0]].includes(+key.split(':')[1]); if(badges[2]){badges[2].textContent=done?'★ DOMÍNIO CONFIRMADO':'✓ VERIFICAÇÃO CONCLUÍDA · falta concluir'; if(done)badges[2].classList.add('master')}}
+    return;
+  }
   const cb=e.target.closest('[data-case-toggle]');
   if(cb){
     const panel=document.getElementById(cb.dataset.caseToggle);
