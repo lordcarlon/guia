@@ -1,13 +1,13 @@
 {
-  "name": "Guia de Estudo — V13",
-  "short_name": "Guia V13",
-  "description": "Redes, Gestão de Contas e Biblioteca Visual",
+  "name": "Guia de Estudo — V29",
+  "short_name": "Guia V29",
+  "description": "Redes, Gestão de Contas, Português e Guia Animado",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#07090f",
-  "theme_color": "#07090f",
+  "background_color": "#0b0905",
+  "theme_color": "#0b0905",
   "lang": "pt",
   "icons": [
     {
